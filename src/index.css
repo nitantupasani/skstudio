@@ -1994,8 +1994,11 @@
   font-size: clamp(2rem, 5vw, 4rem) !important;
   letter-spacing: -0.03em !important;
   line-height: 1.05 !important;
-  margin: 1rem 0 0.6rem !important;
+  margin: 1rem auto 0.6rem !important;
+  width: fit-content;
+  text-align: left;
 }
+.cascade-line { display: block; }
 .swara-tag {
   font-family: 'Inter Tight', sans-serif;
   font-size: 0.62rem;

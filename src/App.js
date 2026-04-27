@@ -1293,7 +1293,12 @@ const SwaraVariation = () => {
           <div className="variant-hero-copy swara-hero-copy">
             <VariantMeta index="01" slug="/v1" tone="Shanta / chamber" />
             <h1 className="swara-name">
-              <LetterCascade text="Swanand Kottewar" startDelay={300} perChar={55} />
+              <span className="cascade-line">
+                <LetterCascade text="Swanand" startDelay={300} perChar={55} />
+              </span>
+              <span className="cascade-line">
+                <LetterCascade text="Kottewar" startDelay={730} perChar={55} />
+              </span>
             </h1>
             <p className="swara-tag">Filmmaker · Photographer · Nagpur</p>
           </div>
@@ -1427,7 +1432,12 @@ const ChakraVariation = () => {
           <div className="chakra-copy">
             <VariantMeta index="02" slug="/v2" tone="Adbhuta / reel" />
             <h1>
-              <LetterCascade text="Swanand Kottewar" startDelay={300} perChar={55} />
+              <span className="cascade-line">
+                <LetterCascade text="Swanand" startDelay={300} perChar={55} />
+              </span>
+              <span className="cascade-line">
+                <LetterCascade text="Kottewar" startDelay={730} perChar={55} />
+              </span>
             </h1>
             <div className="chakra-feature">
               <span>Focused frame</span>
@@ -1561,7 +1571,12 @@ const DarpanVariation = () => {
           <div className="darpan-title">
             <VariantMeta index="03" slug="/v3" tone="Karuna / projector" />
             <h1>
-              <LetterCascade text="Swanand Kottewar" startDelay={300} perChar={55} />
+              <span className="cascade-line">
+                <LetterCascade text="Swanand" startDelay={300} perChar={55} />
+              </span>
+              <span className="cascade-line">
+                <LetterCascade text="Kottewar" startDelay={730} perChar={55} />
+              </span>
             </h1>
           </div>
           <div className="darpan-layout">
@@ -1685,7 +1700,12 @@ const KothriVariation = () => {
           <div className="kothri-copy">
             <VariantMeta index="04" slug="/v4" tone="Shanta / room" />
             <h1>
-              <LetterCascade text="Swanand Kottewar" startDelay={300} perChar={55} />
+              <span className="cascade-line">
+                <LetterCascade text="Swanand" startDelay={300} perChar={55} />
+              </span>
+              <span className="cascade-line">
+                <LetterCascade text="Kottewar" startDelay={730} perChar={55} />
+              </span>
             </h1>
           </div>
           <div className="room-scene" aria-label="Filmmaker room composition">
@@ -1817,7 +1837,12 @@ const JharokhaVariation = () => {
           <div className="jharokha-copy">
             <VariantMeta index="05" slug="/v5" tone="Adbhuta / aperture" />
             <h1>
-              <LetterCascade text="Swanand Kottewar" startDelay={300} perChar={55} />
+              <span className="cascade-line">
+                <LetterCascade text="Swanand" startDelay={300} perChar={55} />
+              </span>
+              <span className="cascade-line">
+                <LetterCascade text="Kottewar" startDelay={730} perChar={55} />
+              </span>
             </h1>
             <div className="jharokha-contact">
               <a href="mailto:lifeskaisart@gmail.com">lifeskaisart@gmail.com</a>
