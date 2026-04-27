@@ -410,7 +410,7 @@ const useReveal = (options = {}) => {
           }
         });
       },
-      { threshold: options.threshold ?? 0.15, rootMargin: options.rootMargin ?? '0px 0px -8% 0px' }
+      { threshold: options.threshold ?? 0, rootMargin: options.rootMargin ?? '0px 0px -2% 0px' }
     );
     obs.observe(node);
     return () => obs.disconnect();
@@ -659,16 +659,16 @@ const FilmCard = ({ film }) => (
         <span className="eyebrow text-ink/90">View →</span>
       </div>
     </div>
-    <div className="mt-6 flex items-baseline justify-between gap-4">
+    <div className="mt-3 sm:mt-5 flex items-baseline justify-between gap-2 sm:gap-4">
       <div className="min-w-0">
-        <h3 className="display text-lg lg:text-xl text-ink leading-tight font-normal">
+        <h3 className="display text-sm sm:text-base lg:text-xl text-ink leading-tight font-normal break-words">
           {film.title}
         </h3>
         {film.subtitle && (
-          <p className="text-xs text-muted italic mt-0.5">{film.subtitle}</p>
+          <p className="text-[10px] sm:text-xs text-muted italic mt-0.5">{film.subtitle}</p>
         )}
       </div>
-      <span className="text-sm text-muted shrink-0 tabular-nums">{film.runtime}</span>
+      <span className="text-[10px] sm:text-sm text-muted shrink-0 tabular-nums">{film.runtime}</span>
     </div>
   </Link>
 );
@@ -684,7 +684,7 @@ const FilmsSection = () => (
         lead="A decade of work between fiction and document, between Vidarbha villages and Mumbai screens. Each film begins from a personal emotion or a quest about the surroundings."
       />
 
-      <Reveal variant="reveal stagger" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-8 gap-y-20">
+      <Reveal variant="stagger" className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-10 sm:gap-y-14 lg:gap-y-20">
         {FILMS.map((film) => (
           <FilmCard key={film.slug} film={film} />
         ))}
