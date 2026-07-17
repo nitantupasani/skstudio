@@ -5,6 +5,28 @@ import { Routes, Route, Link, useParams, useLocation, Navigate } from 'react-rou
 // DATA
 // ============================================================
 
+// Media helpers. Posters/stills are self-hosted under public/media (Drive
+// hotlinking rate-limits and gets ORB-blocked); Drive videos embed via
+// /preview and the original share links are kept for external redirects.
+const media = (file) => `${process.env.PUBLIC_URL || ''}/media/${file}`;
+const driveFolder = (id) => `https://drive.google.com/drive/folders/${id}`;
+
+const videoEmbedUrl = (video, { autoplay = false } = {}) => {
+  if (!video) return null;
+  if (video.platform === 'youtube') {
+    const params = new URLSearchParams({ rel: '0' });
+    if (video.list) params.set('list', video.list);
+    if (autoplay) params.set('autoplay', '1');
+    return `https://www.youtube-nocookie.com/embed/${video.id}?${params.toString()}`;
+  }
+  return `https://drive.google.com/file/d/${video.id}/preview`;
+};
+
+const posterPlaceholder = (initial) =>
+  `data:image/svg+xml;charset=utf-8,${encodeURIComponent(
+    `<svg xmlns="http://www.w3.org/2000/svg" width="900" height="1200" viewBox="0 0 900 1200"><rect width="900" height="1200" fill="#161310"/><circle cx="450" cy="560" r="260" fill="none" stroke="#8a7a5c" stroke-width="2" opacity="0.5"/><circle cx="450" cy="560" r="170" fill="none" stroke="#8a7a5c" stroke-width="1.5" opacity="0.35"/><text x="450" y="606" font-family="Noto Serif Devanagari, serif" font-size="130" fill="#d8cbb0" text-anchor="middle">${initial}</text></svg>`
+  )}`;
+
 const FILMS = [
   {
     slug: 'haalaat',
@@ -19,28 +41,31 @@ const FILMS = [
     synopsis:
       'A film made in COVID-19 lockdown at home. Caught up in stillness. Thoughts like void in an empty box. No sense of the passing time. Emptiness. Anxieties, ecstasies and mixed hopes for an uncertain tomorrow.',
     achievements: [
-      'Jury Award, Quarantine International Film Festival (2020)',
-      'CHINH Silver Award, CHINH Youth Film Festival (2020)',
-      '17th Mumbai International Film Festival (MIFF)',
-      'Cine Masala Film Festival, University of Lausanne, Switzerland (2020)',
-      '23rd Madurai International Short Film and Documentary Film Festival',
-      '10th Chennai International Short Film and Documentary Film Festival',
-      '5th South Asian Film Festival, Kolkata',
-      'Mumbai International Cult Film Festival (2020)',
-      'Semi Finalist, International Moving Film Festival, Iran',
-      'Released on OTT MovieSaints (2022)',
+      'Jury Award · Quarantine International Film Festival (2020)',
+      'CHINH Silver Award · CHINH Youth Film Festival (2020)',
+      'Official Selection · 17th Mumbai International Film Festival (MIFF)',
+      'Official Selection · Cine Masala Film Festival, University of Lausanne, Switzerland (2020)',
+      'Official Selection · 23rd Madurai International Short Film and Documentary Film Festival',
+      'Official Selection · 10th Chennai International Short Film and Documentary Film Festival',
+      'Official Selection · 5th South Asian Film Festival, Kolkata',
+      'Official Selection · Mumbai International Cult Film Festival (2020)',
+      'Semi Finalist · Best Film on COVID-19 Crisis · International Moving Film Festival, Iran',
+      'Semi Finalist · Best DOP, Best Editor, Best Poster · International Moving Film Festival, Iran',
+      'Released on OTT · MovieSaints (2022)',
     ],
     links: [
-      { label: 'The Hindu / Auroville at Swiss Festival', url: 'https://www.thehindu.com/news/cities/puducherry/minimalistic-works-from-auroville-film-institute-make-a-splash-at-swiss-festival/article33110864.ece' },
-      { label: 'The Hindu / Selected for Mumbai Festival', url: 'https://www.thehindu.com/news/cities/puducherry/11-films-from-auroville-institute-selected-for-mumbai-festival/article65476378.ece' },
-      { label: 'New Indian Express / AFI Accolades', url: 'https://www.newindianexpress.com/states/tamil-nadu/2022/Jan/15/four-short-films-of-auroville-film-institute-wins-accolades-at-film-festivals-2407281.html' },
+      { label: 'YouTube Live · Conversation on Haalaat', url: 'https://www.youtube.com/live/ZdeFxBqAJ24?si=48Q1MG5pVXK_gn4C&t=1250' },
+      { label: 'Instagram · Feature', url: 'https://www.instagram.com/p/COaM3c2nrA7/?utm_source=ig_web_copy_link' },
+      { label: 'The Hindu · Auroville films make a splash at Swiss festival', url: 'https://www.thehindu.com/news/cities/puducherry/minimalistic-works-from-auroville-film-institute-make-a-splash-at-swiss-festival/article33110864.ece' },
+      { label: 'The Hindu · 11 films from Auroville institute selected for Mumbai festival', url: 'https://www.thehindu.com/news/cities/puducherry/11-films-from-auroville-institute-selected-for-mumbai-festival/article65476378.ece' },
+      { label: 'New Indian Express · AFI shorts win accolades at film festivals', url: 'https://www.newindianexpress.com/states/tamil-nadu/2022/Jan/15/four-short-films-of-auroville-film-institute-wins-accolades-at-film-festivals-2407281.html' },
+      { label: 'PIB · Press release, Mumbai International Film Festival', url: 'https://www.pib.gov.in/PressReleasePage.aspx?PRID=1830373' },
+      { label: 'University of Lausanne · Cine Masala programme note', url: 'https://api.unil.ch/newsunil/v1/api-newsunil/resources/document/1604672901103.D1604673270944?2020-11-10T09:29:05' },
     ],
-    poster: 'https://picsum.photos/seed/haalaat-poster/1200/1600',
-    stills: [
-      'https://picsum.photos/seed/haalaat-1/1600/1000',
-      'https://picsum.photos/seed/haalaat-2/1600/1000',
-      'https://picsum.photos/seed/haalaat-3/1600/1000',
-    ],
+    poster: media('haalaat-poster.jpg'),
+    stills: [media('haalaat-still.jpg')],
+    stillsUrl: driveFolder('1QNSPu21vHn4LL3xvFd_87Dtmzh81hwte'),
+    video: { platform: 'youtube', id: 'OUnhn3lvuDs', url: 'https://youtu.be/OUnhn3lvuDs?si=7D7WEPunZJnKGNcu', label: 'Watch the film' },
   },
   {
     slug: 'gadha-ghum-raha-hai',
@@ -55,19 +80,17 @@ const FILMS = [
     synopsis:
       'Palash, in his chaotic work calls and routine, spots a donkey standing in the middle of a busy street. In a curious connection, he starts looking for its whereabouts over the weekend. Curiosity translates into responsibility, as their bond grows closer in a material and preoccupied world.',
     achievements: [
-      '4th International Shades Film Festival, Kerala',
-      '15th International Documentary and Short Film Festival of Kerala',
-      '12th International Film Festival of South Asia, Toronto',
+      'Official Selection · 4th International Shades Film Festival, Kerala',
+      'Official Selection · 15th International Documentary and Short Film Festival of Kerala',
+      'Official Selection · 12th International Film Festival of South Asia, Toronto',
       'Screening · SOSE, Delhi',
       'Screening · Meraki, Nagpur',
     ],
     links: [],
-    poster: 'https://picsum.photos/seed/gadha-poster/1200/1600',
-    stills: [
-      'https://picsum.photos/seed/gadha-1/1600/1000',
-      'https://picsum.photos/seed/gadha-2/1600/1000',
-      'https://picsum.photos/seed/gadha-3/1600/1000',
-    ],
+    poster: media('gadha-poster.jpg'),
+    stills: [],
+    stillsUrl: driveFolder('17BdtjEJRDSCcCXpBP6hFHMM0IgWLABna'),
+    video: { platform: 'youtube', id: 'qoE5MTL2O60', url: 'https://youtu.be/qoE5MTL2O60', label: 'Watch the trailer' },
   },
   {
     slug: 'cycle-of-life',
@@ -82,23 +105,22 @@ const FILMS = [
     synopsis:
       'An intimate exploration of change witnessed through the life of Umesh Sarate, an age-old cycle customer of Shinde Cycle Store, in Nagpur. He travels to the city to buy wholesale goods from the local market, as he rents a cycle from the store.',
     achievements: [
-      '17th IDSFFK, Kerala',
-      'Conscious Collective, Mumbai (2024)',
-      'Museo, Gurgaon',
-      'MOD, Bangalore',
-      'MAP, Bangalore',
-      'Udaipur Film Club',
-      'FilmsAajKal, Chandigarh',
+      'Screened · 17th IDSFFK, Kerala',
+      'Screened · Conscious Collective, Mumbai (2024)',
+      'Screened · Museo, Gurgaon',
+      'Screened · MOD, Bangalore',
+      'Screened · MAP, Bangalore',
+      'Screened · Udaipur Film Club',
+      'Screened · FilmsAajKal, Chandigarh',
     ],
     links: [
-      { label: 'Homegrown · Article', url: '#' },
-      { label: 'STIR World · Article', url: '#' },
+      { label: 'Homegrown · Cycle of Life: the bicycle and Indian urban mobility', url: 'https://homegrown.co.in/homegrown-creators/cycle-of-life-watch-a-documentary-tracing-the-bicycles-impact-on-indian-urban-mobility' },
+      { label: 'STIR World · The Nagari Bioscope: cinematic explorations on mobility', url: 'https://www.stirworld.com/see-features-the-nagari-bioscope-prompts-cinematic-explorations-on-mobility-in-urban-india' },
     ],
-    poster: 'https://picsum.photos/seed/cycle-poster/1200/1600',
-    stills: [
-      'https://picsum.photos/seed/cycle-1/1600/1000',
-      'https://picsum.photos/seed/cycle-2/1600/1000',
-    ],
+    poster: media('cycle-poster.jpg'),
+    stills: [],
+    stillsUrl: driveFolder('1IT3FyGXMA2buCPr1Bo9W3B4P_jFFlwKn'),
+    video: { platform: 'youtube', id: 'PNfe3u8qwvE', url: 'https://youtu.be/PNfe3u8qwvE?si=jcfgpZp3MaPp8x7J', label: 'Watch the film' },
   },
   {
     slug: 'anokha-dhaaga',
@@ -109,16 +131,15 @@ const FILMS = [
     year: '2024',
     runtime: '05:04 min',
     language: 'Hindi',
-    role: 'Producer · Director · Editor · Sound Recordist',
+    role: 'Video Producer · Director · Editor · Sound Recordist',
     synopsis:
       'A brief look at women in Jamshedpur’s villages who are turning collective support into real livelihood opportunities, with Tata Power CSR.',
     achievements: [],
     links: [],
-    poster: 'https://picsum.photos/seed/anokha-poster/1200/1600',
-    stills: [
-      'https://picsum.photos/seed/anokha-1/1600/1000',
-      'https://picsum.photos/seed/anokha-2/1600/1000',
-    ],
+    poster: media('anokha-poster.jpg'),
+    stills: [],
+    stillsUrl: driveFolder('1Gu_RDJR8dlMckogDcYGAr6p7qGsPZ3xv'),
+    video: { platform: 'drive', id: '1aVDHBIRdqbn9cbFqBFm5uFGHztSDYoQ8', url: 'https://drive.google.com/file/d/1aVDHBIRdqbn9cbFqBFm5uFGHztSDYoQ8/view?usp=share_link', label: 'Watch the film' },
   },
   {
     slug: 'nisargavedh',
@@ -129,16 +150,15 @@ const FILMS = [
     year: '2025',
     runtime: '18 min',
     language: 'Hindi',
-    role: 'Producer · Director · Cinematographer · Editor',
+    role: 'Video Producer · Director · Cinematographer · Editor',
     synopsis:
-      'Documentary on environment and education initiatives by CHIP NGO, Nagpur, tracing how grassroots ecology becomes the language of a community.',
+      'Documentary on environment and education initiatives by CHIP NGO, Nagpur.',
     achievements: [],
     links: [],
-    poster: 'https://picsum.photos/seed/nisarga-poster/1200/1600',
-    stills: [
-      'https://picsum.photos/seed/nisarga-1/1600/1000',
-      'https://picsum.photos/seed/nisarga-2/1600/1000',
-    ],
+    poster: media('nisarga-poster.jpg'),
+    stills: [],
+    stillsUrl: driveFolder('1hW89zHWWhe_8L-NWWio2NvmXDyGAZPWf'),
+    video: { platform: 'drive', id: '1pM1gAMUjDCyjY2TuuMtLlhFaku1T9Lx-', url: 'https://drive.google.com/file/d/1pM1gAMUjDCyjY2TuuMtLlhFaku1T9Lx-/view?usp=share_link', label: 'Watch the film' },
   },
   {
     slug: 'baal-diwas',
@@ -152,13 +172,12 @@ const FILMS = [
     role: 'Cinematographer · Editor',
     synopsis:
       'Young ‘Gotya’ is fascinated with playing marbles, but circumstances force him to grow from a boy to a man. Set in rural Vidarbha.',
-    achievements: ['Madurai International Film Festival'],
+    achievements: ['Official Selection · Madurai International Film Festival'],
     links: [],
-    poster: 'https://picsum.photos/seed/baal-poster/1200/1600',
-    stills: [
-      'https://picsum.photos/seed/baal-1/1600/1000',
-      'https://picsum.photos/seed/baal-2/1600/1000',
-    ],
+    poster: media('baal-poster.jpg'),
+    stills: [],
+    stillsUrl: driveFolder('1K5DPkbMYjd4rgAPZyxvQ9hdDkDCxANoa'),
+    video: { platform: 'drive', id: '1U_aZbmpCyojTKCUS7Ca_kHxHDbUFzX5n', url: 'https://drive.google.com/file/d/1U_aZbmpCyojTKCUS7Ca_kHxHDbUFzX5n/view', label: 'Watch the film' },
   },
   {
     slug: 'astitva-ka-tinka',
@@ -171,11 +190,13 @@ const FILMS = [
     language: 'Hindi',
     role: 'Director · Cinematographer · Editor',
     synopsis:
-      'Bharatbhai, who works at a dabeli cart in Bhuj, Kutch, reminisces about his past life, juggling memories as he contemplates ‘what next’.',
+      'Bharatbhai, who works at a food (dabeli) cart in Kutch, Bhuj, reminisces about his past life in juggling memories, as he contemplates on ‘what next’.',
     achievements: [],
     links: [],
-    poster: 'https://picsum.photos/seed/astitva-poster/1200/1600',
-    stills: ['https://picsum.photos/seed/astitva-1/1600/1000'],
+    poster: media('astitva-poster.jpg'),
+    stills: [],
+    stillsUrl: driveFolder('1i7M7oUJqCX0cusInfBzsuliz5CNMorok'),
+    video: { platform: 'drive', id: '1J9Ct7WlCB5gfmlQkr9a2CIkUvZ11dMEp', url: 'https://drive.google.com/file/d/1J9Ct7WlCB5gfmlQkr9a2CIkUvZ11dMEp/view?usp=share_link', label: 'Watch the film' },
   },
   {
     slug: 'tragedy-of-commons',
@@ -191,8 +212,10 @@ const FILMS = [
       'Nagpur stood in solidarity with Ladakh, protesting the arrest of environmentalist Sonam Wangchuk. We look into why the Sixth Schedule is vital for Ladakh’s survival, and why the Centre hesitates to fulfil what it once promised.',
     achievements: [],
     links: [],
-    poster: 'https://picsum.photos/seed/tragedy-poster/1200/1600',
-    stills: ['https://picsum.photos/seed/tragedy-1/1600/1000'],
+    poster: media('tragedy-poster.jpg'),
+    stills: [],
+    stillsUrl: driveFolder('1vlON1eC6p_kZ-8xE3ODRwd1Z9OleZ7GE'),
+    video: { platform: 'youtube', id: 'TH88d6kuoWs', url: 'https://youtu.be/TH88d6kuoWs?si=7jj9pwl4ZF_-PXPM', label: 'Watch the film' },
   },
   {
     slug: 'excerpts-from-ladakh',
@@ -208,11 +231,8 @@ const FILMS = [
       'A set of short field excerpts: Demolition of a Traditional House, Turtuk: Then and Now, Scenes from the Border. Fragments observed during travel and study in Ladakh.',
     achievements: [],
     links: [],
-    poster: 'https://picsum.photos/seed/ladakh-poster/1200/1600',
-    stills: [
-      'https://picsum.photos/seed/ladakh-1/1600/1000',
-      'https://picsum.photos/seed/ladakh-2/1600/1000',
-    ],
+    poster: posterPlaceholder('ल'),
+    stills: [],
   },
   {
     slug: 'making-of-jayanti',
@@ -228,8 +248,15 @@ const FILMS = [
       'Documentary series on the making of the Marathi film ‘Jayanti’, released in 2021.',
     achievements: [],
     links: [],
-    poster: 'https://picsum.photos/seed/jayanti-poster/1200/1600',
-    stills: ['https://picsum.photos/seed/jayanti-1/1600/1000'],
+    poster: media('jayanti-poster.jpg'),
+    stills: [],
+    video: {
+      platform: 'youtube',
+      id: 'jLTJz-oxCcc',
+      list: 'PLbUvgjnLjgx0XgrlLTHnQMXR6-vwN_WPs',
+      url: 'https://www.youtube.com/watch?v=jLTJz-oxCcc&list=PLbUvgjnLjgx0XgrlLTHnQMXR6-vwN_WPs',
+      label: 'Watch the series',
+    },
   },
 ];
 
@@ -729,6 +756,77 @@ const DetailNav = ({ backTo = '/', backLabel = 'Index' }) => (
   </header>
 );
 
+// Video preview box: click-to-play embed (YouTube nocookie / Drive preview)
+// plus an external redirect link to the original video URL.
+const VideoPreview = ({ film }) => {
+  const [playing, setPlaying] = useState(false);
+  const { video } = film;
+  const cover = film.stills[0] || film.poster;
+
+  return (
+    <div>
+      <div className="relative aspect-[16/9] bg-surface overflow-hidden group">
+        {video && playing ? (
+          <iframe
+            src={videoEmbedUrl(video, { autoplay: true })}
+            title={`${film.title} — video`}
+            className="absolute inset-0 w-full h-full"
+            style={{ border: 0 }}
+            allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+            allowFullScreen
+          />
+        ) : (
+          <>
+            <img src={cover} alt={film.title} className="absolute inset-0 w-full h-full object-cover" />
+            {video && (
+              <>
+                <div className="absolute inset-0 bg-base/40 group-hover:bg-base/50 transition-colors" />
+                <button
+                  type="button"
+                  onClick={() => setPlaying(true)}
+                  className="absolute inset-0 flex items-center justify-center"
+                  aria-label={`Play ${film.title}`}
+                >
+                  <span className="flex items-center gap-4 text-ink">
+                    <span className="relative w-20 h-20 rounded-full border border-ink/80 flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
+                      <span className="block w-0 h-0 border-y-[10px] border-y-transparent border-l-[14px] border-l-ink ml-1" />
+                    </span>
+                    <span className="eyebrow">{video.label || 'Play'}</span>
+                  </span>
+                </button>
+              </>
+            )}
+          </>
+        )}
+      </div>
+      {(video || film.stillsUrl) && (
+        <div className="mt-5 flex flex-wrap items-center gap-x-10 gap-y-3">
+          {video && (
+            <a
+              href={video.url}
+              target="_blank"
+              rel="noreferrer"
+              className="eyebrow text-ink/70 hover:text-ink transition-colors underline-grow"
+            >
+              {video.platform === 'youtube' ? 'Watch on YouTube ↗' : 'Open video on Drive ↗'}
+            </a>
+          )}
+          {film.stillsUrl && (
+            <a
+              href={film.stillsUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="eyebrow text-ink/70 hover:text-ink transition-colors underline-grow"
+            >
+              Film stills ↗
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const FilmPage = () => {
   const { slug } = useParams();
   const film = FILMS.find((f) => f.slug === slug);
@@ -768,17 +866,8 @@ const FilmPage = () => {
         </div>
 
         <Reveal variant="reveal-img">
-          <div className="relative aspect-[16/9] bg-surface mb-20 lg:mb-24 overflow-hidden group">
-            <img src={film.stills[0] || film.poster} alt={film.title} className="absolute inset-0 w-full h-full object-cover" />
-            <div className="absolute inset-0 bg-base/40 group-hover:bg-base/50 transition-colors" />
-            <button className="absolute inset-0 flex items-center justify-center" aria-label="Play preview">
-              <span className="flex items-center gap-4 text-ink">
-                <span className="relative w-20 h-20 rounded-full border border-ink/80 flex items-center justify-center group-hover:scale-110 transition-transform duration-700">
-                  <span className="block w-0 h-0 border-y-[10px] border-y-transparent border-l-[14px] border-l-ink ml-1" />
-                </span>
-                <span className="eyebrow">Preview</span>
-              </span>
-            </button>
+          <div className="mb-20 lg:mb-24">
+            <VideoPreview film={film} />
           </div>
         </Reveal>
 
@@ -795,18 +884,33 @@ const FilmPage = () => {
           </div>
         </div>
 
-        {film.stills && film.stills.length > 0 && (
+        {(film.stills.length > 0 || film.stillsUrl) && (
           <div className="mb-24 lg:mb-32">
             <Reveal><p className="eyebrow text-muted mb-10">Stills</p></Reveal>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10">
-              {film.stills.map((src, i) => (
-                <Reveal key={i} variant="reveal-img" className={i === 0 ? 'md:col-span-2' : ''}>
-                  <div className="aspect-[16/10] overflow-hidden bg-surface img-grayscale">
-                    <img src={src} alt={`${film.title} still ${i + 1}`} loading="lazy" className="w-full h-full object-cover" />
-                  </div>
-                </Reveal>
-              ))}
-            </div>
+            {film.stills.length > 0 && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 mb-10">
+                {film.stills.map((src, i) => (
+                  <Reveal key={i} variant="reveal-img" className={i === 0 ? 'md:col-span-2' : ''}>
+                    <div className="aspect-[16/10] overflow-hidden bg-surface img-grayscale">
+                      <img src={src} alt={`${film.title} still ${i + 1}`} loading="lazy" className="w-full h-full object-cover" />
+                    </div>
+                  </Reveal>
+                ))}
+              </div>
+            )}
+            {film.stillsUrl && (
+              <Reveal>
+                <a
+                  href={film.stillsUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="group flex items-center justify-between gap-4 border-y border-rule py-6 text-ink/85 hover:text-ink transition-colors"
+                >
+                  <span className="text-lg">Browse all stills on Drive</span>
+                  <span className="text-sm text-muted group-hover:text-ink group-hover:translate-x-1 transition-all">↗</span>
+                </a>
+              </Reveal>
+            )}
           </div>
         )}
 
@@ -1170,6 +1274,699 @@ const ContactSection = () => (
 );
 
 // ============================================================
+// CONCENTRIC ARCS EXPERIENCE
+// ============================================================
+
+const ARC_STAGES = [
+  { id: 'swanand', hindi: 'स', name: 'Swanand', tone: 'Filmmaker · Photographer · Nagpur' },
+  { id: 'films', hindi: 'फ', name: 'Films', tone: 'Filmography · Documentary · Fiction' },
+  { id: 'photographs', hindi: 'प', name: 'Pictures', tone: 'Photo Series · Archives' },
+  { id: 'words', hindi: 'श', name: 'Words', tone: 'Essays · Poetry · Notes' },
+  { id: 'about', hindi: 'अ', name: 'About', tone: 'Profile · Timeline' },
+  { id: 'contact', hindi: 'स', name: 'Contact', tone: 'Collaborations · Commissions' },
+];
+
+const ArcLabel = ({
+  radius,
+  hindi,
+  name,
+  fontSize,
+  strokeOpacity = 0.18,
+  strokeWidth = 0.6,
+  uid,
+}) => {
+  const r = radius;
+  const arcPath = `M ${-r} 0 A ${r} ${r} 0 0 1 ${r} 0`;
+  const pathId = `arc-path-${uid}`;
+  return (
+    <g>
+      <defs>
+        <path id={pathId} d={arcPath} />
+      </defs>
+      <path
+        d={arcPath}
+        fill="none"
+        stroke="currentColor"
+        strokeOpacity={strokeOpacity}
+        strokeWidth={strokeWidth}
+        strokeLinecap="round"
+      />
+      <text className="arc-name-text" fontSize={fontSize} fill="currentColor">
+        <textPath href={`#${pathId}`} startOffset="50%" textAnchor="middle">
+          {hindi} {name}
+        </textPath>
+      </text>
+    </g>
+  );
+};
+
+// eslint-disable-next-line no-unused-vars
+const ConcentricArcs = ({ activeId = ARC_STAGES[0].id, uidPrefix = 'intro' }) => {
+  const arcs = ARC_STAGES.map((stage, i) => ({
+    ...stage,
+    radius: 400 - i * 58,
+    fontSize: i < 3 ? 12 : 11,
+    isActive: stage.id === activeId,
+    uid: `${uidPrefix}-${stage.id}`,
+  }));
+  return (
+    <svg
+      className="concentric-arcs-svg"
+      viewBox="-440 -440 880 460"
+      preserveAspectRatio="xMidYMax meet"
+      aria-hidden
+    >
+      <g transform="translate(0, 20)">
+        {arcs.map((a) => (
+          <g key={a.uid} className={`semi-concentric-line ${a.isActive ? 'is-active' : ''}`}>
+            <ArcLabel
+              radius={a.radius}
+              hindi={a.hindi}
+              name={a.name}
+              fontSize={a.fontSize}
+              hindiSize={a.hindiSize}
+              strokeOpacity={a.isActive ? 0.52 : 0.16}
+              strokeWidth={a.isActive ? 0.9 : 0.6}
+              uid={a.uid}
+            />
+          </g>
+        ))}
+      </g>
+    </svg>
+  );
+};
+
+const SwanandStageContent = () => (
+  <div className="arc-stage-content">
+    <div className="grid grid-cols-12 gap-6 lg:gap-12 items-start">
+      <div className="col-span-12 md:col-span-5">
+        <Reveal variant="reveal-img">
+          <div className="aspect-[4/5] overflow-hidden bg-surface2 img-grayscale">
+            <img
+              src="https://picsum.photos/seed/swanand-portrait/1000/1250?grayscale"
+              alt="Swanand Kottewar"
+              loading="lazy"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </Reveal>
+      </div>
+      <div className="col-span-12 md:col-span-6 md:col-start-7">
+        <Reveal>
+          <p className="display text-2xl lg:text-3xl text-ink/90 leading-snug font-light text-pretty">
+            Filmmaker based out of Nagpur. Ten years of work in films, as a medium to empathise and connect with people and places.
+          </p>
+        </Reveal>
+        <Reveal>
+          <p className="mt-8 text-lg text-ink/70 leading-relaxed text-pretty">
+            Storytelling rooted in observation and reflection. Films have stemmed from either a personal emotion or a quest about the surroundings. Screened at IDSFFK Kerala, MIFF Mumbai, IFFSA Toronto, Cinemasala Switzerland, and awarded at CHINH Youth Film Festival, Delhi and Quarantine International Film Festival.
+          </p>
+        </Reveal>
+        <Reveal>
+          <div className="mt-12 grid grid-cols-2 gap-6">
+            <div>
+              <p className="eyebrow text-muted mb-2">Based in</p>
+              <p className="text-ink/85">Nagpur, Maharashtra</p>
+            </div>
+            <div>
+              <p className="eyebrow text-muted mb-2">Practice</p>
+              <p className="text-ink/85">Films · Photographs · Words</p>
+            </div>
+          </div>
+        </Reveal>
+      </div>
+    </div>
+  </div>
+);
+
+const FilmsArc = ({ items }) => {
+  const positions = [
+    { top: '60%', left: '15%' },
+    { top: '14%', left: '50%' },
+    { top: '60%', left: '85%' },
+  ];
+  return (
+    <div className="films-arc-wrap">
+      <div className="films-arc">
+        <svg
+          className="films-arc-svg"
+          viewBox="0 0 100 60"
+          preserveAspectRatio="none"
+          aria-hidden
+        >
+          <path
+            d="M 15 60 A 45 45 0 0 1 85 60"
+            fill="none"
+            stroke="currentColor"
+            strokeOpacity="0.45"
+            strokeWidth="0.4"
+          />
+          <path
+            d="M 5 60 A 55 55 0 0 1 95 60"
+            fill="none"
+            stroke="currentColor"
+            strokeOpacity="0.18"
+            strokeWidth="0.3"
+          />
+        </svg>
+        {items.map((film, i) => (
+          <Link
+            key={film.slug}
+            to={`/films/${film.slug}`}
+            className="films-arc-tile"
+            style={positions[i]}
+          >
+            <div className="tile-poster">
+              <img src={film.poster} alt={film.title} loading="lazy" />
+            </div>
+            <div className="tile-meta">
+              <h3>{film.title}</h3>
+              <span>{film.year} · {film.runtime}</span>
+            </div>
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const FilmsStageContent = () => {
+  const featured = FILMS.slice(0, 3);
+  return (
+    <div className="arc-stage-content">
+      <Reveal>
+        <FilmsArc items={featured} />
+      </Reveal>
+      <Reveal>
+        <div className="v6-complete-film-list" aria-label="Complete filmography">
+          {FILMS.map((film, i) => (
+            <Link key={film.slug} to={`/films/${film.slug}`} className="v6-complete-film-row">
+              <span>{String(i + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{film.title}</h3>
+                <p>{film.synopsis}</p>
+              </div>
+              <small>{film.type} · {film.year} · {film.runtime} · {film.language}</small>
+            </Link>
+          ))}
+        </div>
+      </Reveal>
+      <Reveal>
+        <div id="films-in-development" className="mt-20 pt-8 border-t border-rule grid grid-cols-12 gap-6 lg:gap-12">
+          <div className="col-span-12 md:col-span-3">
+            <p className="eyebrow text-muted">In Development</p>
+          </div>
+          <div className="col-span-12 md:col-span-9">
+            <p className="text-base lg:text-lg text-ink leading-snug text-pretty">
+              Orchestra of Grief · Bhimgeet Film · Gowari Film · Silent Revolution · A Life to Live <span className="italic text-muted">(work in progress)</span>
+            </p>
+          </div>
+        </div>
+      </Reveal>
+    </div>
+  );
+};
+
+const PicturesStageContent = () => {
+  const featured = PHOTO_SERIES;
+  return (
+    <div className="arc-stage-content">
+      <Reveal>
+        <div className="pictures-3">
+          {featured.map((s, i) => (
+            <Link key={s.slug} to={`/photographs/${s.slug}`} className="tile">
+              <div className="tile-cover">
+                <img src={s.cover} alt={s.title} loading="lazy" />
+              </div>
+              <div className="tile-label">
+                <h3>{s.title}</h3>
+                <span>{String(i + 1).padStart(2, '0')}</span>
+              </div>
+              <p className="mt-1 text-sm leading-relaxed" style={{ color: 'var(--secondary)' }}>{s.blurb}</p>
+            </Link>
+          ))}
+        </div>
+      </Reveal>
+    </div>
+  );
+};
+
+const WordsFloatingGraphic = ({ className, style, size = 90, accent = false }) => (
+  <svg
+    className={`words-float-graphic ${accent ? 'tertiary' : ''} ${className || ''}`}
+    style={style}
+    width={size}
+    height={size}
+    viewBox="-50 -50 100 100"
+    aria-hidden
+  >
+    <circle cx="0" cy="0" r="44" fill="none" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.55" />
+    <circle cx="0" cy="0" r="30" fill="none" stroke="currentColor" strokeWidth="0.6" strokeOpacity="0.65" />
+    <circle cx="0" cy="0" r="16" fill="none" stroke="currentColor" strokeWidth="0.7" strokeOpacity="0.85" />
+    <circle cx="0" cy="0" r="3" fill="currentColor" />
+  </svg>
+);
+
+const WordsStageContent = () => (
+  <div className="arc-stage-content words-floating">
+    <WordsFloatingGraphic className="delay-1" style={{ top: '-30px', right: '4%' }} size={130} />
+    <WordsFloatingGraphic className="delay-2" style={{ bottom: '20%', left: '-40px' }} size={170} />
+    <WordsFloatingGraphic accent className="delay-1" style={{ top: '40%', right: '-20px' }} size={90} />
+    <Reveal variant="reveal stagger">
+      <ul className="divide-y divide-rule border-y border-rule relative" style={{ zIndex: 2 }}>
+        {WORDS.map((w, i) => (
+          <li key={w.slug}>
+            <Link
+              to={`/words/${w.slug}`}
+              className="group block py-10 lg:py-12 grid grid-cols-12 gap-4 lg:gap-8 items-baseline hover:bg-surface/40 -mx-4 lg:-mx-6 px-4 lg:px-6 transition-colors duration-500"
+            >
+              <span className="col-span-12 md:col-span-2 text-sm text-muted tabular-nums">
+                {String(i + 1).padStart(2, '0')} · {new Date(w.date).toLocaleDateString('en-GB', { year: 'numeric', month: 'short' })}
+              </span>
+              <div className="col-span-12 md:col-span-7">
+                <h3 className="display text-2xl lg:text-3xl text-ink leading-tight font-normal group-hover:italic transition-all duration-500" style={{ color: 'var(--ink-strong)' }}>
+                  {w.title}
+                </h3>
+                <p className="text-ink/65 mt-3 max-w-xl text-pretty">{w.excerpt}</p>
+              </div>
+              <span className="col-span-12 md:col-span-2 md:col-start-11 eyebrow text-muted md:text-right">{w.category}</span>
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </Reveal>
+  </div>
+);
+
+const RECOGNITION_URLS = {
+  'CHINH Youth Film Festival': 'https://www.chinh.in/cyff',
+  'CHINH Silver Award, CHINH Youth Film Festival (2020)': 'https://www.chinh.in/cyff',
+  'Jury Award, Quarantine International Film Festival (2020)': null,
+};
+
+const buildRecognition = () => {
+  const seen = new Set();
+  const items = [];
+  FILMS.forEach((f) => {
+    (f.achievements || []).forEach((a) => {
+      const key = a.toLowerCase();
+      if (seen.has(key)) return;
+      seen.add(key);
+      let url = RECOGNITION_URLS[a];
+      if (!url && /chinh/i.test(a)) url = 'https://www.chinh.in/cyff';
+      items.push({ label: a, url, film: f.title });
+    });
+  });
+  return items;
+};
+
+const buildNews = () =>
+  FILMS.flatMap((f) =>
+    (f.links || [])
+      .filter((l) => l.url && l.url !== '#')
+      .map((l) => ({ label: l.label, url: l.url, film: f.title }))
+  );
+
+const AboutStageContent = () => {
+  const recognition = buildRecognition();
+  const news = buildNews();
+  return (
+    <div className="arc-stage-content">
+      <div className="grid grid-cols-12 gap-6 lg:gap-12">
+        <div className="col-span-12 md:col-span-4">
+          <Reveal variant="reveal-img">
+            <div className="aspect-[4/5] overflow-hidden bg-surface2">
+              <img src="https://picsum.photos/seed/swanand-portrait/1000/1250?grayscale" alt="Swanand Kottewar" loading="lazy" className="w-full h-full object-cover" />
+            </div>
+          </Reveal>
+        </div>
+        <div className="col-span-12 md:col-span-7 md:col-start-6">
+          <Reveal>
+            <p className="text-xl lg:text-2xl leading-[1.45] text-pretty" style={{ color: 'var(--ink-strong)' }}>
+              Filmmaker based out of Nagpur. Ten years of work in films, as a medium to empathise and connect with people and places.
+            </p>
+          </Reveal>
+          <Reveal>
+            <p className="mt-6 text-base lg:text-lg leading-relaxed text-pretty max-w-3xl text-ink">
+              Filmmaking as storytelling rooted in observation and reflection. Work stems from either a personal emotion or a quest about the surroundings. Screened at IDSFFK Kerala, MIFF Mumbai, IFFSA Toronto, Cinemasala Switzerland.
+            </p>
+          </Reveal>
+        </div>
+      </div>
+
+      <div className="recognition-block">
+        <div className="recognition-grid">
+          <div>
+            <p className="eyebrow text-muted">Recognition</p>
+            <ul className="recognition-list">
+              {recognition.map((r, i) => (
+                <li key={r.label}>
+                  <span className="num">{String(i + 1).padStart(2, '0')}</span>
+                  {r.url ? (
+                    <a href={r.url} target="_blank" rel="noreferrer">{r.label}</a>
+                  ) : (
+                    <span>{r.label}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <p className="eyebrow text-muted">News & Articles</p>
+            <ul className="news-list">
+              {news.map((n, i) => (
+                <li key={`${n.url}-${i}`}>
+                  <span className="num">{String(i + 1).padStart(2, '0')}</span>
+                  <div>
+                    <a href={n.url} target="_blank" rel="noreferrer">{n.label}</a>
+                    <span className="source">{n.film}</span>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div className="timeline-compact">
+        <p className="eyebrow text-muted mb-3">Timeline</p>
+        {TIMELINE.map((t) => (
+          <div key={t.year} className="row">
+            <span className="year">{t.year}</span>
+            <span className="body">{t.body}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+const ContactStageContent = () => (
+  <div className="arc-stage-content">
+    <div className="grid grid-cols-12 gap-6 lg:gap-12">
+      <div className="col-span-12 md:col-span-7">
+        <Reveal>
+          <p className="eyebrow text-muted mb-5">Email</p>
+          <a href="mailto:lifeskaisart@gmail.com" className="display text-2xl lg:text-4xl text-ink underline-grow inline-block font-normal tracking-tight">
+            lifeskaisart@gmail.com
+          </a>
+        </Reveal>
+      </div>
+      <div className="col-span-12 md:col-span-5">
+        <Reveal>
+          <p className="eyebrow text-muted mb-5">Phone</p>
+          <a href="tel:+918956126016" className="display text-2xl lg:text-4xl text-ink underline-grow inline-block tabular-nums font-normal tracking-tight">
+            +91 89561 26016
+          </a>
+        </Reveal>
+      </div>
+      <div className="col-span-12 md:col-span-6 mt-16">
+        <Reveal>
+          <p className="eyebrow text-muted mb-4">Available for</p>
+          <p className="text-ink/75 text-lg max-w-md text-pretty leading-relaxed">
+            Documentary collaborations, cinematography, editing and screening curation. Open to commissions, conversations, and screenings.
+          </p>
+        </Reveal>
+      </div>
+      <div className="col-span-12 md:col-span-5 md:col-start-8 mt-16">
+        <Reveal>
+          <p className="eyebrow text-muted mb-4">Based in</p>
+          <p className="text-ink/75 text-lg">Nagpur, Maharashtra · India</p>
+        </Reveal>
+      </div>
+    </div>
+  </div>
+);
+
+const STAGE_RENDERERS = {
+  swanand: SwanandStageContent,
+  films: FilmsStageContent,
+  photographs: PicturesStageContent,
+  words: WordsStageContent,
+  about: AboutStageContent,
+  contact: ContactStageContent,
+};
+
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, lo = 0, hi = 1) => Math.min(hi, Math.max(lo, v));
+const easeInOutCubic = (t) => (t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2);
+
+const ARC_K = 0.5522847498;
+
+const MorphArcText = ({ text, progress, uid, fontSize = 22, radius = 140 }) => {
+  const r = radius;
+  const a = 1 - progress;
+  const k = ARC_K;
+  const c1y = -k * r * a;
+  const c2y = -r * a;
+  const midY = -r * a;
+  const c3y = -r * a;
+  const c4y = -k * r * a;
+  const d = `M ${-r} 0 C ${-r} ${c1y} ${-k * r} ${c2y} 0 ${midY} C ${k * r} ${c3y} ${r} ${c4y} ${r} 0`;
+  const pathId = `morph-path-${uid}`;
+  const pad = 28;
+  const vbTop = lerp(-(r + pad), -pad * 1.8, progress);
+  const vbHeight = lerp(r + pad * 2, pad * 3.2, progress);
+  return (
+    <svg
+      className="morph-svg"
+      viewBox={`${-r - pad} ${vbTop} ${2 * r + 2 * pad} ${vbHeight}`}
+      preserveAspectRatio="xMidYMax meet"
+      aria-hidden
+    >
+      <defs>
+        <path id={pathId} d={d} />
+      </defs>
+      <text className="morph-text" fontSize={fontSize} fill="currentColor">
+        <textPath href={`#${pathId}`} startOffset="50%" textAnchor="middle">
+          {text}
+        </textPath>
+      </text>
+    </svg>
+  );
+};
+
+const MENU_H = 64;
+
+const MorphScene = ({ stage, index, total, coverUrl, topOffset, activeId }) => {
+  const StageContent = STAGE_RENDERERS[stage.id];
+  const sectionRef = useRef(null);
+  const [scene, setScene] = useState({ title: 0, content: 0, height: 720 });
+  const label = `${stage.hindi}  ${stage.name}`;
+  const isActive = activeId === stage.id;
+
+  useEffect(() => {
+    let frame = 0;
+    const onScroll = () => {
+      if (frame) return;
+      frame = requestAnimationFrame(() => {
+        frame = 0;
+        const el = sectionRef.current;
+        if (!el) return;
+        const rect = el.getBoundingClientRect();
+        const vh = window.innerHeight || 800;
+        const sceneHeight = Math.max(430, vh - topOffset);
+        const titleProgress = clamp((topOffset - rect.top) / (vh * 0.58), 0, 1);
+        const contentProgress = clamp((topOffset - rect.top - vh * 0.18) / (vh * 0.36), 0, 1);
+        setScene((prev) => {
+          const next = {
+            title: titleProgress,
+            content: contentProgress,
+            height: sceneHeight,
+          };
+          const titleDelta = Math.abs(prev.title - next.title);
+          const contentDelta = Math.abs(prev.content - next.content);
+          const heightDelta = Math.abs(prev.height - next.height);
+          return titleDelta > 0.005 || contentDelta > 0.005 || heightDelta > 2 ? next : prev;
+        });
+      });
+    };
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    window.addEventListener('resize', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      window.removeEventListener('resize', onScroll);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, [topOffset]);
+
+  const titleProgress = easeInOutCubic(scene.title);
+  const contentProgress = easeInOutCubic(scene.content);
+  const titleHeight = lerp(Math.min(scene.height * 0.92, 760), 72, titleProgress);
+  const titleShift = lerp(scene.height * 0.04, 0, titleProgress);
+  const radius = lerp(Math.min(320, scene.height * 0.42), 86, titleProgress);
+  const fontSize = lerp(24, 12.5, titleProgress);
+  const contentOffset = lerp(36, 0, contentProgress);
+  const arcOpacity = clamp((1 - titleProgress) / 0.16, 0, 1);
+
+  return (
+    <section
+      ref={sectionRef}
+      id={stage.id}
+      className={`morph-section ${isActive ? 'is-active' : ''}`}
+      data-stage={stage.id}
+      style={{
+        '--scene-top': `${topOffset}px`,
+        '--title-progress': titleProgress,
+        '--content-progress': contentProgress,
+      }}
+    >
+      <div className="morph-sticky">
+        {index === 0 && (
+          <div
+            className="morph-section-photo"
+            style={{
+              backgroundImage: coverUrl ? `url(${coverUrl})` : undefined,
+            }}
+            aria-hidden
+          />
+        )}
+        <div className="morph-section-veil" aria-hidden />
+        <div
+          className="morph-title-bar"
+          style={{
+            height: `${titleHeight}px`,
+            transform: `translateY(${titleShift}px)`,
+          }}
+        >
+          <div className="morph-title-inner" style={{ opacity: arcOpacity }}>
+            <MorphArcText
+              text={label}
+              progress={titleProgress}
+              uid={stage.id}
+              fontSize={fontSize}
+              radius={radius}
+            />
+          </div>
+          <div className="morph-flat-title" style={{ opacity: titleProgress }}>
+            <span>{stage.hindi}</span>
+            <span>{stage.name}</span>
+          </div>
+          <div className="morph-title-meta">
+            <span className="eyebrow">{String(index + 1).padStart(2, '0')} / {String(total).padStart(2, '0')}</span>
+            <span className="morph-title-tone">{stage.tone}</span>
+          </div>
+        </div>
+        <div
+          className="morph-content-shell"
+          style={{
+            opacity: contentProgress,
+            transform: `translateY(${contentOffset}px)`,
+          }}
+        >
+          <div className="morph-content">
+            {StageContent ? <StageContent /> : null}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
+const TopArcMenu = ({ items, openId, onOpen }) => (
+  <div className="top-arc-menu" role="navigation" aria-label="Sections">
+    {items.map((s) => (
+      <button
+        key={s.id}
+        type="button"
+        className={`top-arc-menu-item ${openId === s.id ? 'is-active' : ''}`}
+        onClick={() => onOpen(s.id)}
+      >
+        <span className="top-arc-menu-hindi">{s.hindi}</span>
+        <span className="top-arc-menu-name">{s.name}</span>
+      </button>
+    ))}
+  </div>
+);
+
+const ConcentricArcsExperience = ({ embedded = false }) => {
+  const [activeId, setActiveId] = useState(ARC_STAGES[0].id);
+  const location = useLocation();
+  const coverUrl = `${process.env.PUBLIC_URL || ''}/cover.JPG`;
+  const chromeOffset = embedded ? 72 : 0;
+  const topOffset = chromeOffset + MENU_H;
+
+  useEffect(() => {
+    document.documentElement.classList.add('has-morph-page');
+    document.body.classList.add('has-morph-page');
+    return () => {
+      document.documentElement.classList.remove('has-morph-page');
+      document.body.classList.remove('has-morph-page');
+    };
+  }, []);
+
+  useEffect(() => {
+    const hash = (location.hash || '').replace('#', '');
+    if (hash && ARC_STAGES.some((s) => s.id === hash)) {
+      setActiveId(hash);
+    }
+  }, [location.hash]);
+
+  useEffect(() => {
+    const updateActiveStage = () => {
+      const anchor = window.innerHeight * 0.42;
+      const current = ARC_STAGES.reduce((selected, stage) => {
+        const el = document.getElementById(stage.id);
+        if (!el) return selected;
+        const rect = el.getBoundingClientRect();
+        return rect.top <= anchor && rect.bottom > 120 ? stage.id : selected;
+      }, ARC_STAGES[0].id);
+      setActiveId((prev) => (prev === current ? prev : current));
+    };
+
+    updateActiveStage();
+    window.addEventListener('scroll', updateActiveStage, { passive: true });
+    window.addEventListener('resize', updateActiveStage);
+    return () => {
+      window.removeEventListener('scroll', updateActiveStage);
+      window.removeEventListener('resize', updateActiveStage);
+    };
+  }, []);
+
+  const handleOpen = (id) => {
+    setActiveId(id);
+    const el = document.getElementById(id);
+    if (el) {
+      const offset = topOffset + 4;
+      const top = el.getBoundingClientRect().top + window.scrollY - offset;
+      window.scrollTo({ top, behavior: 'auto' });
+    }
+  };
+
+  return (
+    <div className={`morph-page-shell arc-variation-page ${embedded ? 'is-embedded' : 'is-standalone'}`}>
+      <div className="morph-experience">
+        <TopArcMenu items={ARC_STAGES} openId={activeId} onOpen={handleOpen} />
+        <div className="morph-stack">
+          {ARC_STAGES.map((stage, i) => (
+            <MorphScene
+              key={stage.id}
+              stage={stage}
+              index={i}
+              total={ARC_STAGES.length}
+              coverUrl={coverUrl}
+              activeId={activeId}
+              topOffset={topOffset}
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+// Main page: the V6 "Ardha Chakra" experience with its full chrome
+// (variant nav + concentric-arc morph sections). /v6 aliases here.
+const MainPage = () => (
+  <VariationShell active="v6" className="v6-page arc-variation-page" showIndex={false}>
+    <main>
+      <ConcentricArcsExperience embedded />
+    </main>
+  </VariationShell>
+);
+
+// ============================================================
 // WEBSITE VARIATIONS
 // ============================================================
 
@@ -1214,14 +2011,22 @@ const VARIATION_LINKS = [
     signal: 'Contact as an aperture opening to light.',
     accent: '#E8DFC9',
   },
+  {
+    slug: 'v6',
+    path: '/v6',
+    name: 'V6',
+    title: 'Ardha Chakra / Scroll Semicircles',
+    signal: 'Devanagari initials, concentric arcs, complete section reveals.',
+    accent: '#D8B36B',
+  },
 ];
 
 const variantBySlug = (slug) => VARIATION_LINKS.find((v) => v.slug === slug);
 
-const VariationLocalNav = ({ accent }) => {
+const VariationLocalNav = ({ accent, active, showIndex = true }) => {
   const items = [
     { id: 'films', label: 'Films' },
-    { id: 'photographs', label: 'Photographs' },
+    { id: 'photographs', label: active === 'v6' ? 'Pictures' : 'Photographs' },
     { id: 'words', label: 'Words' },
     { id: 'about', label: 'About' },
     { id: 'contact', label: 'Contact' },
@@ -1236,14 +2041,16 @@ const VariationLocalNav = ({ accent }) => {
           </a>
         ))}
       </nav>
-      <Link to="/" className="variant-original-link">
-        <span className="eyebrow">Index</span>
-      </Link>
+      {showIndex && (
+        <Link to="/" className="variant-original-link">
+          <span className="eyebrow">Index</span>
+        </Link>
+      )}
     </header>
   );
 };
 
-const VariationShell = ({ active, className = '', children }) => {
+const VariationShell = ({ active, className = '', showIndex = true, children }) => {
   const variant = variantBySlug(active);
   return (
     <div
@@ -1251,7 +2058,7 @@ const VariationShell = ({ active, className = '', children }) => {
       style={{ '--accent': variant.accent }}
     >
       <div className="variation-grain" aria-hidden />
-      <VariationLocalNav accent={variant.accent} />
+      <VariationLocalNav accent={variant.accent} active={active} showIndex={showIndex} />
       {children}
     </div>
   );
@@ -2062,24 +2869,12 @@ const ScrollManager = () => {
   return null;
 };
 
-const HomePage = () => (
-  <main>
-    <Hero />
-    <FilmsSection />
-    <PhotographsSection />
-    <WordsSection />
-    <AboutSection />
-    <ContactSection />
-  </main>
-);
 
 export default function App() {
-  const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const onScroll = () => {
-      setScrolled(window.scrollY > 60);
       const h = document.documentElement;
       const total = h.scrollHeight - h.clientHeight;
       setProgress(total > 0 ? (h.scrollTop / total) * 100 : 0);
@@ -2101,13 +2896,7 @@ export default function App() {
       <Routes>
         <Route
           path="/"
-          element={
-            <>
-              <Nav scrolled={scrolled} />
-              <HomePage />
-              <Footer />
-            </>
-          }
+          element={<MainPage />}
         />
         <Route path="/v" element={<Navigate to="/v1" replace />} />
         <Route path="/v1" element={React.createElement(SwaraVariation)} />
@@ -2115,6 +2904,7 @@ export default function App() {
         <Route path="/v3" element={React.createElement(DarpanVariation)} />
         <Route path="/v4" element={React.createElement(KothriVariation)} />
         <Route path="/v5" element={React.createElement(JharokhaVariation)} />
+        <Route path="/v6" element={<Navigate to="/" replace />} />
         <Route path="/films/:slug" element={<FilmPage />} />
         <Route path="/photographs/:slug" element={<SeriesPage />} />
         <Route path="/words/:slug" element={<WordsPage />} />
