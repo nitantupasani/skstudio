@@ -574,8 +574,7 @@ const Hero = () => {
       <div
         className="absolute inset-0 -z-10"
         style={{
-          backgroundImage:
-            "url('https://picsum.photos/seed/swanand-hero/2400/1600?grayscale')",
+          backgroundImage: `url('${process.env.PUBLIC_URL || ''}/cover.JPG')`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           transform: `translate3d(0, ${scrollY * 0.3}px, 0) scale(${1 + scrollY * 0.0003})`,
@@ -1956,10 +1955,8 @@ const ConcentricArcsExperience = ({ embedded = false }) => {
   );
 };
 
-// Main page: the V6 "Ardha Chakra" experience with its full chrome
-// (variant nav + concentric-arc morph sections). /v6 aliases here.
-const MainPage = () => (
-  <VariationShell active="v6" className="v6-page arc-variation-page" showIndex={false}>
+const V6Variation = () => (
+  <VariationShell active="v6" className="v6-page arc-variation-page">
     <main>
       <ConcentricArcsExperience embedded />
     </main>
@@ -2870,11 +2867,24 @@ const ScrollManager = () => {
 };
 
 
+const HomePage = () => (
+  <main>
+    <Hero />
+    <FilmsSection />
+    <PhotographsSection />
+    <WordsSection />
+    <AboutSection />
+    <ContactSection />
+  </main>
+);
+
 export default function App() {
+  const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     const onScroll = () => {
+      setScrolled(window.scrollY > 60);
       const h = document.documentElement;
       const total = h.scrollHeight - h.clientHeight;
       setProgress(total > 0 ? (h.scrollTop / total) * 100 : 0);
@@ -2896,7 +2906,13 @@ export default function App() {
       <Routes>
         <Route
           path="/"
-          element={<MainPage />}
+          element={
+            <>
+              <Nav scrolled={scrolled} />
+              <HomePage />
+              <Footer />
+            </>
+          }
         />
         <Route path="/v" element={<Navigate to="/v1" replace />} />
         <Route path="/v1" element={React.createElement(SwaraVariation)} />
@@ -2904,7 +2920,7 @@ export default function App() {
         <Route path="/v3" element={React.createElement(DarpanVariation)} />
         <Route path="/v4" element={React.createElement(KothriVariation)} />
         <Route path="/v5" element={React.createElement(JharokhaVariation)} />
-        <Route path="/v6" element={<Navigate to="/" replace />} />
+        <Route path="/v6" element={React.createElement(V6Variation)} />
         <Route path="/films/:slug" element={<FilmPage />} />
         <Route path="/photographs/:slug" element={<SeriesPage />} />
         <Route path="/words/:slug" element={<WordsPage />} />
