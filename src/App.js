@@ -749,6 +749,16 @@ const FilmsSection = () => {
           deva="फ़िल्में"
           aside={
             <div className="flex flex-wrap gap-2 sm:gap-2.5 md:justify-end" role="group" aria-label="Filter films by role">
+              <button
+                type="button"
+                onClick={() => setActiveFilters([])}
+                aria-pressed={activeFilters.length === 0}
+                className={`film-filter px-3.5 sm:px-4 py-2 sm:py-2.5 border min-w-[15.5rem] transition-colors duration-300 ${
+                  activeFilters.length === 0 ? 'is-active border-ink' : 'border-rule'
+                }`}
+              >
+                <span className="eyebrow whitespace-nowrap text-[10px] tracking-[0.12em] sm:tracking-[0.2em]">All Films</span>
+              </button>
               {ROLE_FILTERS.map((f) => {
                 const on = activeFilters.includes(f.key);
                 return (
