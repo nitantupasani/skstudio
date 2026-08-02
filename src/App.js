@@ -9,7 +9,8 @@ import { Routes, Route, Link, useParams, useLocation, Navigate } from 'react-rou
 // hotlinking rate-limits and gets ORB-blocked); Drive videos embed via
 // /preview and the original share links are kept for external redirects.
 const media = (file) => `${process.env.PUBLIC_URL || ''}/media/${file}`;
-const driveFolder = (id) => `https://drive.google.com/drive/folders/${id}`;
+const stillSet = (slug, count) =>
+  Array.from({ length: count }, (_, i) => media(`${slug}-still-${i + 1}.jpg`));
 
 const videoEmbedUrl = (video, { autoplay = false } = {}) => {
   if (!video) return null;
@@ -63,8 +64,7 @@ const FILMS = [
       { label: 'University of Lausanne · Cine Masala programme note', url: 'https://api.unil.ch/newsunil/v1/api-newsunil/resources/document/1604672901103.D1604673270944?2020-11-10T09:29:05' },
     ],
     poster: media('haalaat-poster.jpg'),
-    stills: [media('haalaat-still.jpg')],
-    stillsUrl: driveFolder('1QNSPu21vHn4LL3xvFd_87Dtmzh81hwte'),
+    stills: stillSet('haalaat', 7),
     video: { platform: 'youtube', id: 'OUnhn3lvuDs', url: 'https://youtu.be/OUnhn3lvuDs?si=7D7WEPunZJnKGNcu', label: 'Watch the film' },
   },
   {
@@ -88,8 +88,7 @@ const FILMS = [
     ],
     links: [],
     poster: media('gadha-poster.jpg'),
-    stills: [],
-    stillsUrl: driveFolder('17BdtjEJRDSCcCXpBP6hFHMM0IgWLABna'),
+    stills: stillSet('gadha-ghum-raha-hai', 8),
     video: { platform: 'youtube', id: 'qoE5MTL2O60', url: 'https://youtu.be/qoE5MTL2O60', label: 'Watch the trailer' },
   },
   {
@@ -118,8 +117,7 @@ const FILMS = [
       { label: 'STIR World · The Nagari Bioscope: cinematic explorations on mobility', url: 'https://www.stirworld.com/see-features-the-nagari-bioscope-prompts-cinematic-explorations-on-mobility-in-urban-india' },
     ],
     poster: media('cycle-poster.jpg'),
-    stills: [],
-    stillsUrl: driveFolder('1IT3FyGXMA2buCPr1Bo9W3B4P_jFFlwKn'),
+    stills: stillSet('cycle-of-life', 6),
     video: { platform: 'youtube', id: 'PNfe3u8qwvE', url: 'https://youtu.be/PNfe3u8qwvE?si=jcfgpZp3MaPp8x7J', label: 'Watch the film' },
   },
   {
@@ -137,8 +135,7 @@ const FILMS = [
     achievements: [],
     links: [],
     poster: media('anokha-poster.jpg'),
-    stills: [],
-    stillsUrl: driveFolder('1Gu_RDJR8dlMckogDcYGAr6p7qGsPZ3xv'),
+    stills: stillSet('anokha-dhaaga', 7),
     video: { platform: 'drive', id: '1aVDHBIRdqbn9cbFqBFm5uFGHztSDYoQ8', url: 'https://drive.google.com/file/d/1aVDHBIRdqbn9cbFqBFm5uFGHztSDYoQ8/view?usp=share_link', label: 'Watch the film' },
   },
   {
@@ -156,8 +153,7 @@ const FILMS = [
     achievements: [],
     links: [],
     poster: media('nisarga-poster.jpg'),
-    stills: [],
-    stillsUrl: driveFolder('1hW89zHWWhe_8L-NWWio2NvmXDyGAZPWf'),
+    stills: stillSet('nisargavedh', 7),
     video: { platform: 'drive', id: '1pM1gAMUjDCyjY2TuuMtLlhFaku1T9Lx-', url: 'https://drive.google.com/file/d/1pM1gAMUjDCyjY2TuuMtLlhFaku1T9Lx-/view?usp=share_link', label: 'Watch the film' },
   },
   {
@@ -175,8 +171,7 @@ const FILMS = [
     achievements: ['Official Selection · Madurai International Film Festival'],
     links: [],
     poster: media('baal-poster.jpg'),
-    stills: [],
-    stillsUrl: driveFolder('1K5DPkbMYjd4rgAPZyxvQ9hdDkDCxANoa'),
+    stills: stillSet('baal-diwas', 7),
     video: { platform: 'drive', id: '1U_aZbmpCyojTKCUS7Ca_kHxHDbUFzX5n', url: 'https://drive.google.com/file/d/1U_aZbmpCyojTKCUS7Ca_kHxHDbUFzX5n/view', label: 'Watch the film' },
   },
   {
@@ -194,8 +189,7 @@ const FILMS = [
     achievements: [],
     links: [],
     poster: media('astitva-poster.jpg'),
-    stills: [],
-    stillsUrl: driveFolder('1i7M7oUJqCX0cusInfBzsuliz5CNMorok'),
+    stills: stillSet('astitva-ka-tinka', 6),
     video: { platform: 'drive', id: '1J9Ct7WlCB5gfmlQkr9a2CIkUvZ11dMEp', url: 'https://drive.google.com/file/d/1J9Ct7WlCB5gfmlQkr9a2CIkUvZ11dMEp/view?usp=share_link', label: 'Watch the film' },
   },
   {
@@ -213,8 +207,7 @@ const FILMS = [
     achievements: [],
     links: [],
     poster: media('tragedy-poster.jpg'),
-    stills: [],
-    stillsUrl: driveFolder('1vlON1eC6p_kZ-8xE3ODRwd1Z9OleZ7GE'),
+    stills: stillSet('tragedy-of-commons', 5),
     video: { platform: 'youtube', id: 'TH88d6kuoWs', url: 'https://youtu.be/TH88d6kuoWs?si=7jj9pwl4ZF_-PXPM', label: 'Watch the film' },
   },
   {
@@ -634,20 +627,11 @@ const Hero = () => {
           </span>
         </h1>
 
-        <p className="eyebrow text-ink/65 mt-9">Filmmaker · Nagpur, IN</p>
+        <p className="eyebrow text-ink/65 mt-9 normal-case">FILMMAKER · based out of NAGPUR</p>
 
-        <Reveal>
-          <a
-            href="#films"
-            className="mt-14 group inline-flex items-center text-ink underline-grow"
-          >
-            <span className="eyebrow">Enter the work</span>
-          </a>
-        </Reveal>
       </div>
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3">
-        <span className="eyebrow text-ink/50">Scroll</span>
         <span className="block h-12 w-px bg-ink/25 relative overflow-hidden">
           <span className="absolute inset-x-0 top-0 h-3 bg-ink" style={{ animation: 'scrollHint 2.4s ease-in-out infinite' }} />
         </span>
@@ -785,10 +769,7 @@ const FilmsSection = () => {
           }
         />
 
-        <div className="flex items-center justify-between mb-8">
-          <p className="eyebrow text-muted" aria-live="polite">
-            {visibleFilms.length} {visibleFilms.length === 1 ? 'Film' : 'Films'}
-          </p>
+        <div className="flex items-center justify-end mb-8">
           <div className="flex items-center gap-3">
             <button
               type="button"
@@ -903,28 +884,16 @@ const VideoPreview = ({ film }) => {
           </>
         )}
       </div>
-      {(video || film.stillsUrl) && (
+      {video && (
         <div className="mt-5 flex flex-wrap items-center gap-x-10 gap-y-3">
-          {video && (
-            <a
-              href={video.url}
-              target="_blank"
-              rel="noreferrer"
-              className="eyebrow text-ink/70 hover:text-ink transition-colors underline-grow"
-            >
-              {video.platform === 'youtube' ? 'Watch on YouTube ↗' : 'Open video on Drive ↗'}
-            </a>
-          )}
-          {film.stillsUrl && (
-            <a
-              href={film.stillsUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="eyebrow text-ink/70 hover:text-ink transition-colors underline-grow"
-            >
-              Film stills ↗
-            </a>
-          )}
+          <a
+            href={video.url}
+            target="_blank"
+            rel="noreferrer"
+            className="eyebrow text-ink/70 hover:text-ink transition-colors underline-grow"
+          >
+            {video.platform === 'youtube' ? 'Watch on YouTube ↗' : 'Open video on Drive ↗'}
+          </a>
         </div>
       )}
     </div>
@@ -970,10 +939,22 @@ const FilmPage = () => {
         </div>
 
         <Reveal variant="reveal-img">
-          <div className="mb-20 lg:mb-24">
+          <div className={film.stills.length > 0 ? 'mb-4 lg:mb-6' : 'mb-20 lg:mb-24'}>
             <VideoPreview film={film} />
           </div>
         </Reveal>
+
+        {film.stills.length > 0 && (
+          <div className="mb-20 lg:mb-24 grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 lg:gap-4">
+            {film.stills.map((src, i) => (
+              <Reveal key={i} variant="reveal-img">
+                <div className="aspect-video overflow-hidden bg-surface img-grayscale">
+                  <img src={src} alt={`${film.title} still ${i + 1}`} loading="lazy" className="w-full h-full object-cover" />
+                </div>
+              </Reveal>
+            ))}
+          </div>
+        )}
 
         <div className="grid grid-cols-12 gap-6 lg:gap-12 mb-24 lg:mb-32">
           <div className="col-span-12 md:col-span-3">
@@ -987,36 +968,6 @@ const FilmPage = () => {
             </Reveal>
           </div>
         </div>
-
-        {(film.stills.length > 0 || film.stillsUrl) && (
-          <div className="mb-24 lg:mb-32">
-            <Reveal><p className="eyebrow text-muted mb-10">Stills</p></Reveal>
-            {film.stills.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-10 mb-10">
-                {film.stills.map((src, i) => (
-                  <Reveal key={i} variant="reveal-img" className={i === 0 ? 'md:col-span-2' : ''}>
-                    <div className="aspect-[16/10] overflow-hidden bg-surface img-grayscale">
-                      <img src={src} alt={`${film.title} still ${i + 1}`} loading="lazy" className="w-full h-full object-cover" />
-                    </div>
-                  </Reveal>
-                ))}
-              </div>
-            )}
-            {film.stillsUrl && (
-              <Reveal>
-                <a
-                  href={film.stillsUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="group flex items-center justify-between gap-4 border-y border-rule py-6 text-ink/85 hover:text-ink transition-colors"
-                >
-                  <span className="text-lg">Browse all stills on Drive</span>
-                  <span className="text-sm text-muted group-hover:text-ink group-hover:translate-x-1 transition-all">↗</span>
-                </a>
-              </Reveal>
-            )}
-          </div>
-        )}
 
         {film.achievements && film.achievements.length > 0 && (
           <div className="grid grid-cols-12 gap-6 lg:gap-12 mb-24 lg:mb-32">
@@ -1364,14 +1315,6 @@ const ContactSection = () => (
 
       <div className="mt-28 grid grid-cols-12 gap-6 lg:gap-12">
         <div className="col-span-12 md:col-span-6">
-          <Reveal>
-            <p className="eyebrow text-muted mb-4">Available for</p>
-            <p className="text-ink/75 text-lg max-w-md text-pretty leading-relaxed">
-              Documentary collaborations, cinematography, editing and screening curation. Open to commissions, conversations, and screenings.
-            </p>
-          </Reveal>
-        </div>
-        <div className="col-span-12 md:col-span-5 md:col-start-8">
           <Reveal>
             <p className="eyebrow text-muted mb-4">Based in</p>
             <p className="text-ink/75 text-lg">Nagpur, Maharashtra · India</p>
@@ -1790,14 +1733,6 @@ const ContactStageContent = () => (
         </Reveal>
       </div>
       <div className="col-span-12 md:col-span-6 mt-16">
-        <Reveal>
-          <p className="eyebrow text-muted mb-4">Available for</p>
-          <p className="text-ink/75 text-lg max-w-md text-pretty leading-relaxed">
-            Documentary collaborations, cinematography, editing and screening curation. Open to commissions, conversations, and screenings.
-          </p>
-        </Reveal>
-      </div>
-      <div className="col-span-12 md:col-span-5 md:col-start-8 mt-16">
         <Reveal>
           <p className="eyebrow text-muted mb-4">Based in</p>
           <p className="text-ink/75 text-lg">Nagpur, Maharashtra · India</p>
