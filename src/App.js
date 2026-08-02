@@ -71,7 +71,7 @@ const FILMS = [
     slug: 'gadha-ghum-raha-hai',
     title: 'gadha ghum raha hai',
     titleDeva: 'गधा घूम रहा है',
-    subtitle: 'A Donkey Walks',
+    subtitle: 'A Donkey’s Wandering',
     type: 'Fiction',
     year: '2022',
     runtime: '30 min',
@@ -514,7 +514,7 @@ const HeroBlurWord = ({ word }) => (
 // original wordmark logo via the `wordmark` prop.
 const Logo = ({ size = 'md', wordmark = false }) => {
   if (wordmark) {
-    const cls = size === 'lg' ? 'text-3xl' : size === 'sm' ? 'text-base' : 'text-xl';
+    const cls = size === 'lg' ? 'text-3xl' : size === 'sm' ? 'text-[1rem]' : 'text-xl';
     return (
       <Link to="/" className="group flex items-center gap-2.5 select-none">
         <span className={`deva ${cls} text-ink leading-none`} aria-hidden>स्व</span>
@@ -717,7 +717,7 @@ const FilmCard = ({ film }) => (
     </div>
     <div className="mt-3 sm:mt-5 flex items-baseline justify-between gap-2 sm:gap-4">
       <div className="min-w-0">
-        <h3 className="display text-sm sm:text-base lg:text-xl text-ink leading-tight font-normal break-words">
+        <h3 className="display text-sm sm:text-[1rem] lg:text-xl text-ink leading-tight font-normal break-words">
           {film.title}
         </h3>
         {film.subtitle && (
@@ -1111,7 +1111,7 @@ const PhotographsSection = () => (
                 <div className="absolute inset-0 bg-base/0 group-hover:bg-base/10 transition-colors duration-700" />
               </div>
               <div className="mt-4 flex items-baseline justify-between gap-3">
-                <h3 className="display text-base lg:text-lg text-ink font-normal leading-tight">{s.title}</h3>
+                <h3 className="display text-[1rem] lg:text-lg text-ink font-normal leading-tight">{s.title}</h3>
                 <span className="text-xs text-muted tabular-nums shrink-0">{String(i + 1).padStart(2, '0')}</span>
               </div>
               <p className="mt-2 text-sm text-ink/60 text-pretty leading-relaxed">{s.blurb}</p>
@@ -1241,11 +1241,11 @@ const WordsPage = () => {
           <div className="mt-28 pt-10 border-t border-rule grid grid-cols-2 gap-6">
             <Link to={`/words/${prev.slug}`} className="group block">
               <p className="eyebrow text-muted mb-3">← Previous</p>
-              <p className="display text-base lg:text-lg text-ink/85 group-hover:text-ink transition-colors leading-tight">{prev.title}</p>
+              <p className="display text-[1rem] lg:text-lg text-ink/85 group-hover:text-ink transition-colors leading-tight">{prev.title}</p>
             </Link>
             <Link to={`/words/${next.slug}`} className="group block text-right">
               <p className="eyebrow text-muted mb-3">Next →</p>
-              <p className="display text-base lg:text-lg text-ink/85 group-hover:text-ink transition-colors leading-tight">{next.title}</p>
+              <p className="display text-[1rem] lg:text-lg text-ink/85 group-hover:text-ink transition-colors leading-tight">{next.title}</p>
             </Link>
           </div>
         </div>
@@ -1584,7 +1584,7 @@ const FilmsStageContent = () => {
             <p className="eyebrow text-muted">In Development</p>
           </div>
           <div className="col-span-12 md:col-span-9">
-            <p className="text-base lg:text-lg text-ink leading-snug text-pretty">
+            <p className="text-[1rem] lg:text-lg text-ink leading-snug text-pretty">
               Orchestra of Grief · Bhimgeet Film · Gowari Film · Silent Revolution · A Life to Live <span className="italic text-muted">(work in progress)</span>
             </p>
           </div>
@@ -1714,7 +1714,7 @@ const AboutStageContent = () => {
             </p>
           </Reveal>
           <Reveal>
-            <p className="mt-6 text-base lg:text-lg leading-relaxed text-pretty max-w-3xl text-ink">
+            <p className="mt-6 text-[1rem] lg:text-lg leading-relaxed text-pretty max-w-3xl text-ink">
               Filmmaking as storytelling rooted in observation and reflection. Work stems from either a personal emotion or a quest about the surroundings. Screened at IDSFFK Kerala, MIFF Mumbai, IFFSA Toronto, Cinemasala Switzerland.
             </p>
           </Reveal>
