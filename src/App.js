@@ -660,7 +660,7 @@ const Hero = () => {
 // SECTION HEADER
 // ============================================================
 
-const SectionHeader = ({ index, eyebrow, title, deva, lead }) => (
+const SectionHeader = ({ index, eyebrow, title, deva, lead, aside }) => (
   <div className="grid grid-cols-12 gap-6 lg:gap-12 items-end mb-20 lg:mb-28">
     <div className="col-span-12 md:col-span-6">
       <Reveal>
@@ -684,6 +684,11 @@ const SectionHeader = ({ index, eyebrow, title, deva, lead }) => (
             {lead}
           </p>
         </Reveal>
+      </div>
+    )}
+    {aside && (
+      <div className="col-span-12 md:col-span-6 md:col-start-7">
+        <Reveal>{aside}</Reveal>
       </div>
     )}
   </div>
@@ -765,28 +770,27 @@ const FilmsSection = () => {
           eyebrow="Filmography"
           title="Films"
           deva="फ़िल्में"
+          aside={
+            <div className="flex flex-wrap gap-2 sm:gap-2.5 md:justify-end" role="group" aria-label="Filter films by role">
+              {ROLE_FILTERS.map((f) => {
+                const on = activeFilters.includes(f.key);
+                return (
+                  <button
+                    key={f.key}
+                    type="button"
+                    onClick={() => toggleFilter(f.key)}
+                    aria-pressed={on}
+                    className={`film-filter px-3.5 sm:px-4 py-2 sm:py-2.5 border transition-colors duration-300 ${
+                      on ? 'is-active border-ink' : 'border-rule'
+                    }`}
+                  >
+                    <span className="eyebrow whitespace-nowrap text-[10px] tracking-[0.12em] sm:tracking-[0.2em]">{f.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          }
         />
-
-        <Reveal>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-14 lg:mb-20" role="group" aria-label="Filter films by role">
-            {ROLE_FILTERS.map((f) => {
-              const on = activeFilters.includes(f.key);
-              return (
-                <button
-                  key={f.key}
-                  type="button"
-                  onClick={() => toggleFilter(f.key)}
-                  aria-pressed={on}
-                  className={`film-filter px-4 sm:px-5 py-6 lg:py-8 border text-left overflow-hidden transition-colors duration-300 ${
-                    on ? 'is-active border-ink' : 'border-rule hover:border-rule2'
-                  }`}
-                >
-                  <span className="eyebrow whitespace-nowrap text-[10px] tracking-[0.12em] sm:text-[11px] sm:tracking-[0.32em]">{f.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </Reveal>
 
         <div className="flex items-center justify-between mb-8">
           <p className="eyebrow text-muted" aria-live="polite">
