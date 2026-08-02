@@ -715,20 +715,20 @@ const FilmCard = ({ film }) => (
         <span className="eyebrow text-ink bg-base/60 backdrop-blur-md px-2.5 py-1 border border-rule2">{film.type}</span>
         <span className="eyebrow text-ink bg-base/60 backdrop-blur-md px-2.5 py-1 border border-rule2">{film.year}</span>
       </div>
-      <div className="absolute bottom-5 left-5 right-5 flex justify-between items-end opacity-0 group-hover:opacity-100 transition-opacity duration-700">
-        <span className="eyebrow text-ink/90">{film.language}</span>
-        <span className="eyebrow text-ink/90">View →</span>
+      <div className="absolute bottom-5 left-5 right-5 opacity-0 group-hover:opacity-100 transition-opacity duration-700">
+        {film.subtitle && (
+          <p className="display italic text-lg text-ink mb-2 drop-shadow-[0_1px_4px_rgba(0,0,0,0.6)]">{film.subtitle}</p>
+        )}
+        <div className="flex justify-between items-end">
+          <span className="eyebrow text-ink/90">{film.language}</span>
+          <span className="eyebrow text-ink/90">View →</span>
+        </div>
       </div>
     </div>
     <div className="mt-3 sm:mt-5 flex items-baseline justify-between gap-2 sm:gap-4">
-      <div className="min-w-0">
-        <h3 className="display text-xl lg:text-2xl text-ink leading-tight font-normal break-words">
-          {film.title}
-        </h3>
-        {film.subtitle && (
-          <p className="text-[10px] sm:text-xs text-muted italic mt-0.5">{film.subtitle}</p>
-        )}
-      </div>
+      <h3 className="display text-xl lg:text-2xl text-ink leading-tight font-normal break-words min-w-0">
+        {film.title}
+      </h3>
       <span className="text-[10px] sm:text-sm text-muted shrink-0 tabular-nums">{film.runtime}</span>
     </div>
   </Link>
