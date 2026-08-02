@@ -2953,6 +2953,17 @@ const HomePage = () => (
   </main>
 );
 
+// Remounts on pathname change so every page enters with the same
+// blur-clear treatment as the titles. Hash-only changes don't retrigger.
+const PageTransition = ({ children }) => {
+  const location = useLocation();
+  return (
+    <div key={location.pathname} className="page-enter">
+      {children}
+    </div>
+  );
+};
+
 export default function App() {
   const [scrolled, setScrolled] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -2978,6 +2989,7 @@ export default function App() {
         aria-hidden
       />
 
+      <PageTransition>
       <Routes>
         <Route
           path="/"
@@ -3001,6 +3013,7 @@ export default function App() {
         <Route path="/words/:slug" element={<WordsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+      </PageTransition>
     </div>
   );
 }
