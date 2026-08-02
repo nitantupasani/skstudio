@@ -801,18 +801,6 @@ const FilmsSection = () => {
           ))}
         </div>
 
-        <Reveal>
-        <div className="mt-28 pt-12 border-t border-rule grid grid-cols-12 gap-6 lg:gap-12">
-          <div className="col-span-12 md:col-span-3">
-            <p className="eyebrow text-muted">In Development</p>
-          </div>
-          <div className="col-span-12 md:col-span-9">
-            <p className="display text-xl lg:text-2xl text-ink/85 leading-snug text-pretty font-light">
-              Orchestra of Grief · Bhimgeet Film · Gowari Film · Silent Revolution · A Life to Live <span className="italic text-muted">(work in progress)</span>
-            </p>
-          </div>
-        </div>
-      </Reveal>
       </div>
     </section>
   );
