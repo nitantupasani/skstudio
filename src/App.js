@@ -550,7 +550,7 @@ const Nav = ({ scrolled }) => {
             <a
               key={n.id}
               href={linkFor(n.id)}
-              className="text-sm lg:text-base text-ink/65 hover:text-ink transition-colors duration-500 underline-grow"
+              className="eyebrow text-white/70 hover:text-white transition-colors duration-500 underline-grow"
             >
               {n.label}
             </a>
