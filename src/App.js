@@ -644,8 +644,8 @@ const Hero = () => {
 // SECTION HEADER
 // ============================================================
 
-const SectionHeader = ({ index, eyebrow, title, deva, lead, aside }) => (
-  <div className="grid grid-cols-12 gap-6 lg:gap-12 items-end mb-20 lg:mb-28">
+const SectionHeader = ({ index, eyebrow, title, deva, lead, aside, tight }) => (
+  <div className={`grid grid-cols-12 gap-6 lg:gap-12 items-end ${tight ? 'mb-8 lg:mb-10' : 'mb-20 lg:mb-28'}`}>
     <div className="col-span-12 md:col-span-6">
       <Reveal>
         <div className="flex items-baseline gap-4 mb-5">
@@ -747,6 +747,7 @@ const FilmsSection = () => {
           eyebrow="Filmography"
           title="Films"
           deva="फ़िल्में"
+          tight
           aside={
             <div className="flex flex-wrap gap-2 sm:gap-2.5 md:justify-end" role="group" aria-label="Filter films by role">
               <button
@@ -779,7 +780,7 @@ const FilmsSection = () => {
           }
         />
 
-        <div className="flex items-center justify-end mb-8">
+        <div className="flex items-center justify-end mb-4">
           <div className="flex items-center gap-3">
             <button
               type="button"
