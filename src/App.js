@@ -496,10 +496,10 @@ const LetterCascade = ({ text, startDelay = 0, perChar = 55, className = '' }) =
   </span>
 );
 
-// Lowercase word with its last two letters progressively blurred
-// (india.docs profile-picture treatment)
+// Lowercase word with its last two letters blurred for a beat
+// (india.docs profile-picture treatment); blur clears after ~1s.
 const HeroBlurWord = ({ word }) => (
-  <span className="block">
+  <span className="inline-block">
     {word.slice(0, -2)}
     <span className="hero-blur-soft">{word.slice(-2, -1)}</span>
     <span className="hero-blur-hard">{word.slice(-1)}</span>
@@ -525,7 +525,7 @@ const Logo = ({ size = 'md', wordmark = false }) => {
   const cls = size === 'lg' ? 'text-3xl' : size === 'sm' ? 'text-lg' : 'text-2xl';
   return (
     <Link to="/" className="group flex items-center select-none" aria-label="Swanand Kottewar — home">
-      <span className={`deva ${cls} text-ink leading-none`} aria-hidden>स्वा</span>
+      <span className={`deva ${cls} text-ink leading-none`} aria-hidden>स्व</span>
     </Link>
   );
 };
@@ -624,14 +624,13 @@ const Hero = () => {
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-base/50 via-base/10 to-base" />
 
       <div className="relative px-6 sm:px-10 lg:px-16 xl:px-24 pt-36 lg:pt-44 pb-28 min-h-screen flex flex-col items-center justify-center text-center">
-        {/* Static name, india.docs style: lowercase, stacked so s/k align, tail letters blurred */}
+        {/* Static name, india.docs style: lowercase inline, tail letters blurred briefly */}
         <h1
-          className="display font-light text-[clamp(2.75rem,9vw,6.5rem)] leading-[1.02] text-ink tracking-tight text-left"
+          className="display font-light text-[clamp(2.25rem,7vw,5.75rem)] leading-[1.05] text-ink tracking-tight"
           aria-label="Swanand Kottewar"
         >
           <span aria-hidden="true">
-            <HeroBlurWord word="swanand" />
-            <HeroBlurWord word="kottewar" />
+            <HeroBlurWord word="swanand" /> <HeroBlurWord word="kottewar" />
           </span>
         </h1>
 
