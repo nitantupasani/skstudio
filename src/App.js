@@ -1291,7 +1291,7 @@ const AboutSection = () => (
           <Reveal variant="reveal stagger">
             <ul>
               {TIMELINE.map((t, i) => (
-                <li key={i} className="py-10 lg:py-12 border-t border-rule grid grid-cols-12 gap-4 lg:gap-8">
+                <li key={i} className="py-4 lg:py-5 border-t border-rule grid grid-cols-12 gap-4 lg:gap-8">
                   <span className="col-span-12 md:col-span-3 display text-2xl text-ink font-normal tabular-nums">{t.year}</span>
                   <p className="col-span-12 md:col-span-9 text-ink/75 text-lg leading-relaxed text-pretty">{t.body}</p>
                 </li>
@@ -1314,14 +1314,8 @@ const ContactSection = () => (
       <Reveal>
         <p className="eyebrow text-muted mb-10">05 / Contact</p>
       </Reveal>
-      <Reveal variant="reveal-blur">
-        <h2 className="display text-[clamp(2rem,4.5vw,2.625rem)] leading-[1.05] text-ink text-balance font-light tracking-tight">
-          Let’s connect
-          <span className="italic"> :)</span>
-        </h2>
-      </Reveal>
 
-      <div className="mt-20 lg:mt-28 grid grid-cols-12 gap-6 lg:gap-12">
+      <div className="grid grid-cols-12 gap-6 lg:gap-12">
         <div className="col-span-12 md:col-span-7">
           <Reveal>
             <p className="eyebrow text-muted mb-5">Email</p>
@@ -1343,14 +1337,6 @@ const ContactSection = () => (
         </div>
       </div>
 
-      <div className="mt-28 grid grid-cols-12 gap-6 lg:gap-12">
-        <div className="col-span-12 md:col-span-6">
-          <Reveal>
-            <p className="eyebrow text-muted mb-4">Based in</p>
-            <p className="text-ink/75 text-lg">Nagpur, Maharashtra · India</p>
-          </Reveal>
-        </div>
-      </div>
     </div>
   </section>
 );
