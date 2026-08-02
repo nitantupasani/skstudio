@@ -901,6 +901,12 @@ const VideoPreview = ({ film }) => {
 const FilmPage = () => {
   const { slug } = useParams();
   const film = FILMS.find((f) => f.slug === slug);
+  const stillsRef = useRef(null);
+
+  const scrollStills = (dir) => {
+    const el = stillsRef.current;
+    if (el) el.scrollBy({ left: dir * el.clientWidth, behavior: 'smooth' });
+  };
 
   if (!film) return <Navigate to="/" replace />;
 
@@ -943,14 +949,39 @@ const FilmPage = () => {
         </Reveal>
 
         {film.stills.length > 0 && (
-          <div className="mb-20 lg:mb-24 grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-5 gap-3 lg:gap-4">
-            {film.stills.map((src, i) => (
-              <Reveal key={i} variant="reveal-img">
-                <div className="aspect-video overflow-hidden bg-surface img-grayscale">
-                  <img src={src} alt={`${film.title} still ${i + 1}`} loading="lazy" className="w-full h-full object-cover" />
-                </div>
-              </Reveal>
-            ))}
+          <div className="mb-20 lg:mb-24">
+            <div
+              ref={stillsRef}
+              className="films-row flex gap-4 overflow-x-auto snap-x pb-2"
+            >
+              {film.stills.map((src, i) => (
+                <Reveal key={i} variant="reveal-img" className="w-[calc((100%-2rem)/3)] shrink-0 snap-start">
+                  <div className="aspect-video overflow-hidden bg-surface img-grayscale">
+                    <img src={src} alt={`${film.title} still ${i + 1}`} loading="lazy" className="w-full h-full object-cover" />
+                  </div>
+                </Reveal>
+              ))}
+            </div>
+            {film.stills.length > 3 && (
+              <div className="mt-3 flex items-center justify-end gap-3">
+                <button
+                  type="button"
+                  onClick={() => scrollStills(-1)}
+                  aria-label="Scroll stills left"
+                  className="w-9 h-9 border border-rule text-ink/70 hover:text-ink hover:border-ink/60 transition-colors duration-300 flex items-center justify-center"
+                >
+                  ←
+                </button>
+                <button
+                  type="button"
+                  onClick={() => scrollStills(1)}
+                  aria-label="Scroll stills right"
+                  className="w-9 h-9 border border-rule text-ink/70 hover:text-ink hover:border-ink/60 transition-colors duration-300 flex items-center justify-center"
+                >
+                  →
+                </button>
+              </div>
+            )}
           </div>
         )}
 
