@@ -72,6 +72,38 @@
     border-color: var(--rule);
   }
 
+  /* Hero name: india.docs-style progressive blur on the tail letters */
+  .hero-blur-soft {
+    filter: blur(0.028em);
+    opacity: 0.95;
+  }
+  .hero-blur-hard {
+    filter: blur(0.06em);
+    opacity: 0.9;
+  }
+
+  /* Films single-row scroller: hide the scrollbar, arrows drive it */
+  .films-row {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .films-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Role filter rectangles */
+  .film-filter {
+    color: rgba(237, 234, 227, 0.7);
+    background: transparent;
+  }
+  .film-filter:hover {
+    color: var(--ink);
+  }
+  .film-filter.is-active {
+    background: var(--ink);
+    color: var(--base);
+  }
+
   .marquee-track {
     animation: marquee 80s linear infinite;
   }

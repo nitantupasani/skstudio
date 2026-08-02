@@ -260,6 +260,31 @@ const FILMS = [
   },
 ];
 
+// Role filters for the Films section. Numbers below refer to positions in
+// FILM_ORDER (1-based), matching the filmography numbering in the brief.
+const FILM_ORDER = [
+  'gadha-ghum-raha-hai', // 1  Gadha ghum raha hai
+  'haalaat',             // 2  Haalat
+  'cycle-of-life',       // 3  A cycle of life
+  'anokha-dhaaga',       // 4  Tata Power CSR
+  'nisargavedh',         // 5  Nisargavedh
+  'astitva-ka-tinka',    // 6  Astitva ka tinka
+  'tragedy-of-commons',  // 7  Tragedy of the Commons
+  'baal-diwas',          // 8  Bal Divas
+  'making-of-jayanti',   // 9  Making of Jayanti
+];
+
+const ROLE_FILTERS = [
+  { key: 'director', label: 'Director', films: [1, 2, 3, 4, 5, 6, 7] },
+  { key: 'writer', label: 'Writer', films: [1, 2] },
+  { key: 'research', label: 'Research', films: [3] },
+  { key: 'cinematographer', label: 'Cinematographer', films: [1, 2, 5, 6, 7, 8] },
+  { key: 'editor', label: 'Editor', films: [1, 2, 3, 4, 5, 6, 7, 8, 9] },
+  { key: 'producer', label: 'Producer', films: [1, 2, 4, 5, 6] },
+  { key: 'csr-ngo', label: 'CSR / NGO', films: [4, 5] },
+  { key: 'lifeskais', label: 'LifeSkais', films: [1, 2, 4, 5, 6] },
+].map((f) => ({ ...f, slugs: f.films.map((n) => FILM_ORDER[n - 1]) }));
+
 const PHOTO_SERIES = [
   {
     slug: 'food-archive',
@@ -471,16 +496,36 @@ const LetterCascade = ({ text, startDelay = 0, perChar = 55, className = '' }) =
   </span>
 );
 
+// Lowercase word with its last two letters progressively blurred
+// (india.docs profile-picture treatment)
+const HeroBlurWord = ({ word }) => (
+  <span className="block">
+    {word.slice(0, -2)}
+    <span className="hero-blur-soft">{word.slice(-2, -1)}</span>
+    <span className="hero-blur-hard">{word.slice(-1)}</span>
+  </span>
+);
+
 // ============================================================
 // SHARED
 // ============================================================
 
-const Logo = ({ size = 'md' }) => {
-  const cls = size === 'lg' ? 'text-3xl' : size === 'sm' ? 'text-base' : 'text-xl';
+// Default: Devanagari "स्वा" only (main site). Variation pages keep the
+// original wordmark logo via the `wordmark` prop.
+const Logo = ({ size = 'md', wordmark = false }) => {
+  if (wordmark) {
+    const cls = size === 'lg' ? 'text-3xl' : size === 'sm' ? 'text-base' : 'text-xl';
+    return (
+      <Link to="/" className="group flex items-center gap-2.5 select-none">
+        <span className={`deva ${cls} text-ink leading-none`} aria-hidden>स्व</span>
+        <span className="eyebrow text-ink/70 group-hover:text-ink transition-colors duration-500">Swanand Kottewar</span>
+      </Link>
+    );
+  }
+  const cls = size === 'lg' ? 'text-3xl' : size === 'sm' ? 'text-lg' : 'text-2xl';
   return (
-    <Link to="/" className="group flex items-center gap-2.5 select-none">
-      <span className={`deva ${cls} text-ink leading-none`} aria-hidden>स्व</span>
-      <span className="eyebrow text-ink/70 group-hover:text-ink transition-colors duration-500">Swanand Kottewar</span>
+    <Link to="/" className="group flex items-center select-none" aria-label="Swanand Kottewar — home">
+      <span className={`deva ${cls} text-ink leading-none`} aria-hidden>स्वा</span>
     </Link>
   );
 };
@@ -563,12 +608,6 @@ const Hero = () => {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
-  // perChar 60ms; "Swanand" 7 chars, gap, "Kottewar" 8 chars → ~16 * 60 ≈ 1s total
-  const FIRST = 'Swanand';
-  const SECOND = 'Kottewar';
-  const baseDelay = 350;
-  const gap = baseDelay + FIRST.length * 60 + 120;
-
   return (
     <section id="top" className="relative min-h-screen overflow-hidden">
       <div
@@ -585,26 +624,18 @@ const Hero = () => {
       <div className="absolute inset-0 -z-10 bg-gradient-to-b from-base/50 via-base/10 to-base" />
 
       <div className="relative px-6 sm:px-10 lg:px-16 xl:px-24 pt-36 lg:pt-44 pb-28 min-h-screen flex flex-col items-center justify-center text-center">
-        <p
-          className="eyebrow text-ink/65 mb-10 letter"
-          style={{ animationDelay: '0ms', animationDuration: '900ms' }}
+        {/* Static name, india.docs style: lowercase, stacked so s/k align, tail letters blurred */}
+        <h1
+          className="display font-light text-[clamp(2.75rem,9vw,6.5rem)] leading-[1.02] text-ink tracking-tight text-left"
+          aria-label="Swanand Kottewar"
         >
-          Filmmaker · Photographer · Nagpur, IN
-        </p>
-
-        <h1 className="display text-[clamp(2.25rem,7vw,5.75rem)] leading-[1.05] text-ink tracking-tight">
-          <LetterCascade text={FIRST} startDelay={baseDelay} perChar={60} className="font-light" />
-          <span className="letter inline-block" style={{ animationDelay: `${baseDelay + FIRST.length * 60}ms` }}>{' '}</span>
-          <LetterCascade text={SECOND} startDelay={gap} perChar={60} className="italic font-light" />
+          <span aria-hidden="true">
+            <HeroBlurWord word="swanand" />
+            <HeroBlurWord word="kottewar" />
+          </span>
         </h1>
 
-        <Reveal>
-          <p className="mt-10 max-w-xl text-base lg:text-lg text-ink/70 leading-relaxed text-pretty">
-            Films, photographs, and writing, rooted in observation and reflection.
-            Stories of donkeys on busy streets, cycle stores in Nagpur,
-            and the long quiet of a documentary day.
-          </p>
-        </Reveal>
+        <p className="eyebrow text-ink/65 mt-9">Filmmaker · Nagpur, IN</p>
 
         <Reveal>
           <a
@@ -699,24 +730,101 @@ const FilmCard = ({ film }) => (
   </Link>
 );
 
-const FilmsSection = () => (
-  <section id="films" className="relative py-32 lg:py-44 bg-base">
-    <div className="px-6 sm:px-10 lg:px-16 xl:px-24">
-      <SectionHeader
-        index="01"
-        eyebrow="Filmography"
-        title="Films"
-        deva="फ़िल्में"
-        lead="A decade of work between fiction and document, between Vidarbha villages and Mumbai screens. Each film begins from a personal emotion or a quest about the surroundings."
-      />
+const FilmsSection = () => {
+  const [activeFilters, setActiveFilters] = useState([]);
+  const rowRef = useRef(null);
 
-      <Reveal variant="stagger" className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-4 sm:gap-x-6 lg:gap-x-8 gap-y-10 sm:gap-y-14 lg:gap-y-20">
-        {FILMS.map((film) => (
-          <FilmCard key={film.slug} film={film} />
-        ))}
-      </Reveal>
+  const toggleFilter = (key) =>
+    setActiveFilters((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+    );
 
-      <Reveal>
+  // Multi-select union: a film shows if it belongs to any selected role.
+  const visibleFilms = (() => {
+    if (activeFilters.length === 0) return FILMS;
+    const slugs = new Set(
+      ROLE_FILTERS.filter((f) => activeFilters.includes(f.key)).flatMap((f) => f.slugs)
+    );
+    return FILMS.filter((film) => slugs.has(film.slug));
+  })();
+
+  // Snap the row back to the start whenever the selection changes
+  useEffect(() => {
+    if (rowRef.current) rowRef.current.scrollTo({ left: 0 });
+  }, [activeFilters]);
+
+  const scrollRow = (dir) => {
+    const el = rowRef.current;
+    if (el) el.scrollBy({ left: dir * Math.round(el.clientWidth * 0.8), behavior: 'smooth' });
+  };
+
+  return (
+    <section id="films" className="relative py-32 lg:py-44 bg-base">
+      <div className="px-6 sm:px-10 lg:px-16 xl:px-24">
+        <SectionHeader
+          index="01"
+          eyebrow="Filmography"
+          title="Films"
+          deva="फ़िल्में"
+        />
+
+        <Reveal>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 mb-14 lg:mb-20" role="group" aria-label="Filter films by role">
+            {ROLE_FILTERS.map((f) => {
+              const on = activeFilters.includes(f.key);
+              return (
+                <button
+                  key={f.key}
+                  type="button"
+                  onClick={() => toggleFilter(f.key)}
+                  aria-pressed={on}
+                  className={`film-filter px-4 sm:px-5 py-6 lg:py-8 border text-left overflow-hidden transition-colors duration-300 ${
+                    on ? 'is-active border-ink' : 'border-rule hover:border-rule2'
+                  }`}
+                >
+                  <span className="eyebrow whitespace-nowrap text-[10px] tracking-[0.12em] sm:text-[11px] sm:tracking-[0.32em]">{f.label}</span>
+                </button>
+              );
+            })}
+          </div>
+        </Reveal>
+
+        <div className="flex items-center justify-between mb-8">
+          <p className="eyebrow text-muted" aria-live="polite">
+            {visibleFilms.length} {visibleFilms.length === 1 ? 'Film' : 'Films'}
+          </p>
+          <div className="flex items-center gap-3">
+            <button
+              type="button"
+              onClick={() => scrollRow(-1)}
+              aria-label="Scroll films left"
+              className="w-11 h-11 border border-rule text-ink/70 hover:text-ink hover:border-ink/60 transition-colors duration-300 flex items-center justify-center"
+            >
+              ←
+            </button>
+            <button
+              type="button"
+              onClick={() => scrollRow(1)}
+              aria-label="Scroll films right"
+              className="w-11 h-11 border border-rule text-ink/70 hover:text-ink hover:border-ink/60 transition-colors duration-300 flex items-center justify-center"
+            >
+              →
+            </button>
+          </div>
+        </div>
+
+        <div
+          ref={rowRef}
+          className="films-row flex gap-4 sm:gap-6 lg:gap-8 overflow-x-auto snap-x pb-2"
+        >
+          {visibleFilms.map((film) => (
+            <div key={film.slug} className="w-[62vw] sm:w-[290px] lg:w-[320px] xl:w-[340px] shrink-0 snap-start">
+              <FilmCard film={film} />
+            </div>
+          ))}
+        </div>
+
+        <Reveal>
         <div className="mt-28 pt-12 border-t border-rule grid grid-cols-12 gap-6 lg:gap-12">
           <div className="col-span-12 md:col-span-3">
             <p className="eyebrow text-muted">In Development</p>
@@ -728,9 +836,10 @@ const FilmsSection = () => (
           </div>
         </div>
       </Reveal>
-    </div>
-  </section>
-);
+      </div>
+    </section>
+  );
+};
 
 // ============================================================
 // FILM DETAIL OVERLAY
@@ -2030,7 +2139,7 @@ const VariationLocalNav = ({ accent, active, showIndex = true }) => {
   ];
   return (
     <header className="variant-nav" style={{ '--accent': accent }}>
-      <Logo size="sm" />
+      <Logo size="sm" wordmark />
       <nav className="variant-nav-links" aria-label="Sections">
         {items.map((n) => (
           <a key={n.id} href={`#${n.id}`}>
