@@ -557,7 +557,7 @@ const Nav = ({ scrolled }) => {
             <a
               key={n.id}
               href={linkFor(n.id)}
-              className="text-sm text-ink/65 hover:text-ink transition-colors duration-500 underline-grow"
+              className="text-sm lg:text-base text-ink/65 hover:text-ink transition-colors duration-500 underline-grow"
             >
               {n.label}
             </a>
@@ -626,7 +626,7 @@ const Hero = () => {
       <div className="relative px-6 sm:px-10 lg:px-16 xl:px-24 pt-36 lg:pt-44 pb-28 min-h-screen flex flex-col items-center justify-center text-center">
         {/* Static name, india.docs style: lowercase inline, tail letters blurred briefly */}
         <h1
-          className="display font-light text-[clamp(2.25rem,7vw,5.75rem)] leading-[1.05] text-ink tracking-tight"
+          className="display font-light text-[clamp(2rem,4.5vw,2.625rem)] leading-[1.1] text-ink tracking-tight"
           aria-label="Swanand Kottewar"
         >
           <span aria-hidden="true">
@@ -671,7 +671,7 @@ const SectionHeader = ({ index, eyebrow, title, deva, lead, aside }) => (
         </div>
       </Reveal>
       <Reveal variant="reveal-blur">
-        <h2 className="display text-5xl lg:text-7xl text-ink leading-[1]">
+        <h2 className="display text-[2rem] lg:text-[2.625rem] text-ink leading-[1.05]">
           {title}
         </h2>
         {deva && <span className="deva block text-xl text-muted mt-4">{deva}</span>}
@@ -680,7 +680,7 @@ const SectionHeader = ({ index, eyebrow, title, deva, lead, aside }) => (
     {lead && (
       <div className="col-span-12 md:col-span-5 md:col-start-8">
         <Reveal>
-          <p className="text-lg lg:text-xl text-ink/70 leading-relaxed text-pretty">
+          <p className="text-base lg:text-lg text-ink/70 leading-relaxed text-pretty">
             {lead}
           </p>
         </Reveal>
@@ -722,7 +722,7 @@ const FilmCard = ({ film }) => (
     </div>
     <div className="mt-3 sm:mt-5 flex items-baseline justify-between gap-2 sm:gap-4">
       <div className="min-w-0">
-        <h3 className="display text-sm sm:text-[1rem] lg:text-xl text-ink leading-tight font-normal break-words">
+        <h3 className="display text-xl lg:text-2xl text-ink leading-tight font-normal break-words">
           {film.title}
         </h3>
         {film.subtitle && (
@@ -959,11 +959,11 @@ const FilmPage = () => {
               <p className="eyebrow text-muted mb-6">{film.type} · {film.year} · {film.runtime} · {film.language}</p>
             </Reveal>
             <Reveal variant="reveal-blur">
-              <h1 className="display text-5xl md:text-7xl text-ink leading-[1.02] text-balance">
+              <h1 className="display text-xl md:text-2xl text-ink leading-[1.1] text-balance">
                 {film.title}
               </h1>
               {film.subtitle && (
-                <p className="display italic text-2xl text-muted mt-5 font-light">{film.subtitle}</p>
+                <p className="display italic text-lg text-muted mt-4 font-light">{film.subtitle}</p>
               )}
               <span className="deva block text-xl text-muted mt-5">{film.titleDeva}</span>
             </Reveal>
@@ -988,7 +988,7 @@ const FilmPage = () => {
           </div>
           <div className="col-span-12 md:col-span-9">
             <Reveal>
-              <p className="display text-2xl lg:text-3xl text-ink leading-snug text-pretty font-light">
+              <p className="display text-base lg:text-lg text-ink leading-relaxed text-pretty font-light">
                 {film.synopsis}
               </p>
             </Reveal>
@@ -1115,7 +1115,7 @@ const PhotographsSection = () => (
                 <div className="absolute inset-0 bg-base/0 group-hover:bg-base/10 transition-colors duration-700" />
               </div>
               <div className="mt-4 flex items-baseline justify-between gap-3">
-                <h3 className="display text-[1rem] lg:text-lg text-ink font-normal leading-tight">{s.title}</h3>
+                <h3 className="display text-xl lg:text-2xl text-ink font-normal leading-tight">{s.title}</h3>
                 <span className="text-xs text-muted tabular-nums shrink-0">{String(i + 1).padStart(2, '0')}</span>
               </div>
               <p className="mt-2 text-sm text-ink/60 text-pretty leading-relaxed">{s.blurb}</p>
@@ -1143,7 +1143,7 @@ const SeriesPage = () => {
       <div className="px-6 sm:px-10 lg:px-16 xl:px-24 pt-28 lg:pt-36 pb-24">
         <Reveal><p className="eyebrow text-muted mb-6">Photo Series</p></Reveal>
         <Reveal variant="reveal-blur">
-          <h1 className="display text-5xl md:text-7xl text-ink leading-[1.02] font-light tracking-tight">{series.title}</h1>
+          <h1 className="display text-[2rem] md:text-[2.625rem] text-ink leading-[1.05] font-light tracking-tight">{series.title}</h1>
         </Reveal>
         <Reveal>
           <p className="text-lg text-ink/70 max-w-2xl mt-8 text-pretty">{series.blurb}</p>
@@ -1228,14 +1228,14 @@ const WordsPage = () => {
             </div>
           </Reveal>
           <Reveal variant="reveal-blur">
-            <h1 className="display text-4xl md:text-6xl text-ink leading-[1.05] font-light tracking-tight text-balance">
+            <h1 className="display text-[2rem] md:text-[2.625rem] text-ink leading-[1.1] font-light tracking-tight text-balance">
               {piece.title}
             </h1>
           </Reveal>
           <div className="mt-16 space-y-7">
             {piece.body.map((para, i) => (
               <Reveal key={i}>
-                <p className={`text-ink/85 text-lg lg:text-xl leading-relaxed text-pretty ${piece.category === 'Poetry' ? 'italic font-light' : ''}`}>
+                <p className={`text-ink/85 text-base lg:text-lg leading-relaxed text-pretty ${piece.category === 'Poetry' ? 'italic font-light' : ''}`}>
                   {para}
                 </p>
               </Reveal>
@@ -1276,7 +1276,7 @@ const AboutSection = () => (
             </div>
           </Reveal>
           <Reveal variant="reveal-blur">
-            <h2 className="display text-5xl lg:text-7xl text-ink leading-[1]">About</h2>
+            <h2 className="display text-[2rem] lg:text-[2.625rem] text-ink leading-[1.05]">About</h2>
             <span className="deva block text-xl text-muted mt-4">परिचय</span>
           </Reveal>
         </div>
@@ -1286,20 +1286,25 @@ const AboutSection = () => (
         <div className="col-span-12 md:col-span-4">
           <Reveal variant="reveal-img">
             <div className="aspect-[4/5] overflow-hidden bg-surface2 img-grayscale">
-              <img src="https://picsum.photos/seed/swanand-portrait/1000/1250?grayscale" alt="Swanand Kottewar" className="w-full h-full object-cover" />
+              <img src={media('swanand-portrait.jpg')} alt="Swanand Kottewar" className="w-full h-full object-cover" />
             </div>
           </Reveal>
         </div>
         <div className="col-span-12 md:col-span-7 md:col-start-6">
           <Reveal>
-            <p className="display text-2xl lg:text-4xl text-ink leading-[1.2] text-pretty font-light">
-              Filmmaker based out of Nagpur. Ten years of work in films, as a medium to empathise and connect with people and places.
+            <p className="text-base lg:text-lg text-ink/85 leading-relaxed text-pretty max-w-3xl">
+              Hello! I am a filmmaker based out of Nagpur with 10 years of experience in filmmaking. I like engaging in films, as a medium to empathise and connect with people and places. I see it as a way of storytelling, rooted in observation and reflection. My films have stemmed from either a personal emotion or a quest about the surroundings.
             </p>
           </Reveal>
           <Reveal>
-            <p className="mt-10 text-lg text-ink/70 leading-relaxed text-pretty max-w-3xl">
-              I see filmmaking as storytelling rooted in observation and reflection. Films help me build a worldview and give a voice to express. My films have stemmed from either a personal emotion or a quest about the surroundings. Screened at IDSFFK Kerala, MIFF Mumbai, IFFSA Toronto, Cinemasala Switzerland, and awarded at CHINH Youth Film Festival, Delhi and Quarantine International Film Festival.
+            <p className="mt-6 text-base lg:text-lg text-ink/70 leading-relaxed text-pretty max-w-3xl">
+              Some of my films have been screened at various international film festivals like IDSFFK Kerala, MIFF Mumbai, IFFSA Toronto, Cinemasala Film Festival, Switzerland; and won awards at CHINH Youth Film Festival, Delhi and Quarantine International Film Festival.
             </p>
+          </Reveal>
+          <Reveal>
+            <a href="#contact" className="display text-xl lg:text-2xl text-ink underline-grow inline-block mt-10 font-light">
+              Let’s connect <span className="italic">:)</span>
+            </a>
           </Reveal>
         </div>
       </div>
@@ -1336,7 +1341,7 @@ const ContactSection = () => (
         <p className="eyebrow text-muted mb-10">05 / Contact</p>
       </Reveal>
       <Reveal variant="reveal-blur">
-        <h2 className="display text-[clamp(2.5rem,8vw,8rem)] leading-[1] text-ink text-balance font-light tracking-tight">
+        <h2 className="display text-[clamp(2rem,4.5vw,2.625rem)] leading-[1.05] text-ink text-balance font-light tracking-tight">
           Let’s connect
           <span className="italic"> :)</span>
         </h2>
@@ -1348,7 +1353,7 @@ const ContactSection = () => (
             <p className="eyebrow text-muted mb-5">Email</p>
             <a
               href="mailto:lifeskaisart@gmail.com"
-              className="display text-2xl lg:text-4xl text-ink underline-grow inline-block font-normal tracking-tight"
+              className="display text-xl lg:text-2xl text-ink underline-grow inline-block font-normal tracking-tight"
             >
               lifeskaisart@gmail.com
             </a>
@@ -1357,7 +1362,7 @@ const ContactSection = () => (
         <div className="col-span-12 md:col-span-5">
           <Reveal>
             <p className="eyebrow text-muted mb-5">Phone</p>
-            <a href="tel:+918956126016" className="display text-2xl lg:text-4xl text-ink underline-grow inline-block tabular-nums font-normal tracking-tight">
+            <a href="tel:+918956126016" className="display text-xl lg:text-2xl text-ink underline-grow inline-block tabular-nums font-normal tracking-tight">
               +91 89561 26016
             </a>
           </Reveal>
@@ -1474,7 +1479,7 @@ const SwanandStageContent = () => (
         <Reveal variant="reveal-img">
           <div className="aspect-[4/5] overflow-hidden bg-surface2 img-grayscale">
             <img
-              src="https://picsum.photos/seed/swanand-portrait/1000/1250?grayscale"
+              src={media('swanand-portrait.jpg')}
               alt="Swanand Kottewar"
               loading="lazy"
               className="w-full h-full object-cover"
@@ -1707,7 +1712,7 @@ const AboutStageContent = () => {
         <div className="col-span-12 md:col-span-4">
           <Reveal variant="reveal-img">
             <div className="aspect-[4/5] overflow-hidden bg-surface2">
-              <img src="https://picsum.photos/seed/swanand-portrait/1000/1250?grayscale" alt="Swanand Kottewar" loading="lazy" className="w-full h-full object-cover" />
+              <img src={media('swanand-portrait.jpg')} alt="Swanand Kottewar" loading="lazy" className="w-full h-full object-cover" />
             </div>
           </Reveal>
         </div>
@@ -2300,7 +2305,7 @@ const SwaraVariation = () => {
           <h2>About</h2>
           <div className="swara-about">
             <div className="swara-about-portrait">
-              <img src="https://picsum.photos/seed/swanand-portrait/1000/1250?grayscale" alt="Swanand Kottewar" loading="lazy" />
+              <img src={media('swanand-portrait.jpg')} alt="Swanand Kottewar" loading="lazy" />
             </div>
             <div className="swara-about-text">
               <p>Filmmaker based out of Nagpur. Ten years of work in films, as a medium to empathise and connect with people and places.</p>
@@ -2455,7 +2460,7 @@ const ChakraVariation = () => {
               <p>Films screened at IDSFFK Kerala, MIFF Mumbai, IFFSA Toronto, Cinemasala Switzerland, and awarded at CHINH Youth Film Festival, Delhi and Quarantine International Film Festival.</p>
             </div>
             <div className="chakra-about-portrait">
-              <img src="https://picsum.photos/seed/swanand-portrait/1000/1250?grayscale" alt="Swanand Kottewar" loading="lazy" />
+              <img src={media('swanand-portrait.jpg')} alt="Swanand Kottewar" loading="lazy" />
             </div>
           </div>
         </section>
@@ -2885,7 +2890,7 @@ const JharokhaVariation = () => {
           <h2>About</h2>
           <div className="jharokha-aperture">
             <div className="jharokha-aperture-portal">
-              <img src="https://picsum.photos/seed/swanand-portrait/1000/1000?grayscale" alt="Swanand Kottewar" loading="lazy" />
+              <img src={media('swanand-portrait.jpg')} alt="Swanand Kottewar" loading="lazy" />
             </div>
             <div className="jharokha-aperture-text">
               <p>Filmmaker based out of Nagpur. Ten years of work in films, as a medium to empathise and connect with people and places.</p>
