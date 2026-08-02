@@ -240,11 +240,18 @@
     will-change: opacity, transform;
   }
 
-  /* Route change: page enters like the titles — blur clears, slight rise.
-     No fill mode: keyframe ends at identity, and lingering transform/filter
-     would break position:fixed descendants (nav). */
+  /* Route change: outgoing page fades out (opacity only — blur/transform
+     here would re-anchor position:fixed nav mid-scroll), then the new page
+     enters like the titles — blur clears, slight rise. Enter has no fill
+     mode: keyframe ends at identity, and a lingering transform/filter
+     would break position:fixed descendants (nav). Exit keeps `forwards`
+     so the page holds at opacity 0 until React swaps the route. Duration
+     must match EXIT_MS in App.js. */
   .page-enter {
     animation: pageIn 800ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .page-exit {
+    animation: pageOut 300ms ease-out forwards;
   }
 }
 
@@ -265,6 +272,12 @@
     opacity: 1;
     filter: blur(0);
     transform: translateY(0);
+  }
+}
+
+@keyframes pageOut {
+  to {
+    opacity: 0;
   }
 }
 
@@ -1995,7 +2008,8 @@
     opacity: 1 !important;
     transform: none !important;
   }
-  .page-enter {
+  .page-enter,
+  .page-exit {
     animation: none !important;
   }
 }

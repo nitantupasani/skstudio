@@ -2904,8 +2904,9 @@ const Footer = () => (
 // APP
 // ============================================================
 
-const ScrollManager = () => {
-  const location = useLocation();
+// Receives the *displayed* location from PageTransition (not the live one)
+// so the scroll jump happens at the swap, while the page is faded out.
+const ScrollManager = ({ location }) => {
   useEffect(() => {
     const { hash } = location;
     if (hash) {
@@ -2916,11 +2917,14 @@ const ScrollManager = () => {
         if (el) {
           el.scrollIntoView({ behavior: 'smooth', block: 'start' });
         } else {
-          window.scrollTo({ top: 0 });
+          window.scrollTo({ top: 0, behavior: 'instant' });
         }
       });
     } else {
-      window.scrollTo({ top: 0 });
+      // Instant: html has scroll-behavior:smooth, but the swap happens while
+      // the page is held at opacity 0 — a smooth scroll here would still be
+      // visibly travelling when the new page fades in.
+      window.scrollTo({ top: 0, behavior: 'instant' });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location.pathname, location.hash]);
@@ -2939,15 +2943,30 @@ const HomePage = () => (
   </main>
 );
 
-// Remounts on pathname change so every page enters with the same
-// blur-clear treatment as the titles. Hash-only changes don't retrigger.
+// Two-stage route transition: on pathname change the outgoing page fades
+// out (Routes stay pinned to the old location), then the new page enters
+// with the same blur-clear treatment as the titles. Hash-only changes
+// sync silently so in-page anchors don't animate.
+const EXIT_MS = 300;
+
 const PageTransition = ({ children }) => {
   const location = useLocation();
-  return (
-    <div key={location.pathname} className="page-enter">
-      {children}
-    </div>
-  );
+  const [displayLocation, setDisplayLocation] = useState(location);
+  const [stage, setStage] = useState('page-enter');
+
+  useEffect(() => {
+    if (location.pathname !== displayLocation.pathname) {
+      setStage('page-exit');
+      const t = setTimeout(() => {
+        setDisplayLocation(location);
+        setStage('page-enter');
+      }, EXIT_MS);
+      return () => clearTimeout(t);
+    }
+    if (location !== displayLocation) setDisplayLocation(location);
+  }, [location, displayLocation]);
+
+  return <div className={stage}>{children(displayLocation)}</div>;
 };
 
 export default function App() {
@@ -2968,7 +2987,6 @@ export default function App() {
 
   return (
     <div className="bg-base text-ink">
-      <ScrollManager />
       <div
         className="fixed top-0 left-0 right-0 h-[2px] bg-ink z-50 origin-left"
         style={{ transform: `scaleX(${progress / 100})` }}
@@ -2976,7 +2994,10 @@ export default function App() {
       />
 
       <PageTransition>
-      <Routes>
+        {(displayLocation) => (
+          <>
+          <ScrollManager location={displayLocation} />
+      <Routes location={displayLocation}>
         <Route
           path="/"
           element={
@@ -2999,6 +3020,8 @@ export default function App() {
         <Route path="/words/:slug" element={<WordsPage />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+          </>
+        )}
       </PageTransition>
     </div>
   );
