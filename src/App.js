@@ -968,16 +968,16 @@ const FilmPage = () => {
         </div>
 
         {film.achievements && film.achievements.length > 0 && (
-          <div className="grid grid-cols-12 gap-6 lg:gap-12 mb-24 lg:mb-32">
+          <div className="grid grid-cols-12 gap-6 lg:gap-12 mb-16 lg:mb-20">
             <div className="col-span-12 md:col-span-3">
-              <Reveal><p className="eyebrow text-muted">Achievements</p></Reveal>
+              <Reveal><p className="eyebrow text-muted">Recognition</p></Reveal>
             </div>
             <div className="col-span-12 md:col-span-9">
               <Reveal variant="reveal stagger">
-                <ul className="divide-y divide-rule">
+                <ul className="grid grid-cols-1 md:grid-cols-2 gap-x-10 gap-y-1">
                   {film.achievements.map((a, i) => (
-                    <li key={i} className="py-5 text-ink/85 text-lg flex gap-6">
-                      <span className="text-muted tabular-nums shrink-0 w-10">{String(i + 1).padStart(2, '0')}</span>
+                    <li key={i} className="py-1.5 text-ink/85 text-base flex gap-4">
+                      <span className="text-muted tabular-nums shrink-0 w-8">{String(i + 1).padStart(2, '0')}</span>
                       <span>{a}</span>
                     </li>
                   ))}
