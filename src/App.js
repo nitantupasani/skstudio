@@ -3016,7 +3016,16 @@ export default function App() {
         <Route path="/v4" element={React.createElement(KothriVariation)} />
         <Route path="/v5" element={React.createElement(JharokhaVariation)} />
         <Route path="/v6" element={React.createElement(V6Variation)} />
-        <Route path="/reel" element={<LongTake />} />
+        <Route
+          path="/reel"
+          element={
+            <>
+              <Nav scrolled={scrolled} />
+              <Hero />
+              <LongTake />
+            </>
+          }
+        />
         <Route path="/films/:slug" element={<FilmPage />} />
         <Route path="/photographs/:slug" element={<SeriesPage />} />
         <Route path="/words/:slug" element={<WordsPage />} />

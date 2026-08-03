@@ -3,9 +3,10 @@ import { Link } from 'react-router-dom';
 
 // ============================================================
 // THE LONG TAKE — a light, scroll-driven screening of the
-// filmography. One fixed stage, one continuous scroll; stills
-// crossfade with a slow push-in, grain and letterbox on top.
-// No WebGL, no libraries, no audio: ~1 MB of images, lazy.
+// filmography. Rendered below the original Hero: as the hero
+// scrolls away the fixed stage fades in, then stills crossfade
+// with a slow push-in, grain and letterbox on top. No WebGL,
+// no libraries, no gate — just scroll. ~1 MB of images, lazy.
 // ============================================================
 
 const media = (file) => `${process.env.PUBLIC_URL || ''}/media/${file}`;
@@ -122,7 +123,8 @@ const GRAIN_URI = `url("data:image/svg+xml,${encodeURIComponent(
 const LongTakeStyles = () => (
   <style>{`
     .lt-root { background: #060606; color: var(--ink); }
-    .lt-stage { position: fixed; inset: 0; overflow: hidden; }
+    .lt-stage { position: fixed; inset: 0; overflow: hidden; z-index: 10;
+      will-change: opacity; pointer-events: none; }
     .lt-frame { position: absolute; inset: 0; will-change: opacity, transform; }
     .lt-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .lt-frame::after { content: ''; position: absolute; inset: 0;
@@ -152,40 +154,19 @@ const LongTakeStyles = () => (
       color: var(--tertiary); font-size: 0.75rem; letter-spacing: 0.28em; text-transform: uppercase;
       text-decoration: none; border-bottom: 1px solid rgba(216,179,107,0.35); padding-bottom: 0.3rem; }
     .lt-caption .watch:hover { border-color: var(--tertiary); }
-    .lt-hud { position: fixed; z-index: 6; font-size: 0.68rem; letter-spacing: 0.3em;
-      text-transform: uppercase; color: rgba(237,234,227,0.55); user-select: none; }
-    .lt-hud.tl { top: 5.6vh; left: clamp(1.5rem, 4vw, 4rem); display: flex; gap: 1rem; align-items: baseline; }
-    .lt-hud.tr { top: 5.6vh; right: clamp(1.5rem, 4vw, 4rem); text-align: right; }
+    .lt-hud { position: fixed; z-index: 12; font-size: 0.68rem; letter-spacing: 0.3em;
+      text-transform: uppercase; color: rgba(237,234,227,0.55); user-select: none;
+      top: 88px; right: clamp(1.5rem, 4vw, 4rem); text-align: right;
+      will-change: opacity; pointer-events: none; }
     .lt-hud .yr { color: var(--ink-strong); font-size: 1.05rem; letter-spacing: 0.12em; }
-    .lt-hud a { color: inherit; text-decoration: none; }
-    .lt-hud a:hover { color: var(--ink-strong); }
     .lt-rail { position: fixed; right: clamp(0.9rem, 2.2vw, 2rem); top: 50%; transform: translateY(-50%);
-      z-index: 6; display: flex; flex-direction: column; gap: 0.9rem; }
+      z-index: 12; display: flex; flex-direction: column; gap: 0.9rem; will-change: opacity; }
     .lt-rail button { width: 26px; height: 26px; display: grid; place-items: center;
       background: none; border: 0; cursor: pointer; padding: 0; }
     .lt-rail i { width: 5px; height: 5px; border-radius: 50%; background: rgba(237,234,227,0.4);
       transition: all 300ms ease; }
     .lt-rail button.on i { background: var(--tertiary); transform: scale(1.7); }
     .lt-rail button:hover i { background: var(--ink-strong); }
-    .lt-veil { position: fixed; inset: 0; z-index: 20; display: flex; flex-direction: column;
-      align-items: center; justify-content: center; background: #060606; text-align: center;
-      transition: opacity 900ms ease; padding: 2rem; }
-    .lt-veil.gone { opacity: 0; pointer-events: none; }
-    .lt-veil .mark { font-size: 2.2rem; color: var(--tertiary); }
-    .lt-veil .t { font-size: clamp(3.2rem, 9vw, 7rem); font-weight: 300; letter-spacing: -0.03em;
-      color: var(--ink-strong); line-height: 1.05; margin-top: 1.2rem; }
-    .lt-veil .st { font-size: clamp(1rem, 2.2vw, 1.4rem); color: rgba(237,234,227,0.55);
-      font-weight: 300; letter-spacing: 0.55em; text-transform: uppercase; margin-top: 0.9rem; }
-    .lt-veil .go { margin-top: 3.2rem; display: inline-flex; align-items: center; gap: 0.8rem;
-      border: 1px solid rgba(216,179,107,0.45); color: var(--tertiary); background: none;
-      padding: 1rem 2.2rem; letter-spacing: 0.3em; font-size: 0.72rem; text-transform: uppercase;
-      cursor: pointer; transition: all 300ms ease; }
-    .lt-veil .go:hover { background: var(--tertiary); color: #060606; }
-    .lt-veil .s { margin-top: 2rem; font-size: 0.62rem; letter-spacing: 0.3em;
-      color: rgba(237,234,227,0.35); text-transform: uppercase; }
-    .lt-hint { position: fixed; bottom: 5.4vh; left: 50%; transform: translateX(-50%); z-index: 6;
-      font-size: 0.62rem; letter-spacing: 0.34em; text-transform: uppercase;
-      color: rgba(237,234,227,0.45); transition: opacity 600ms ease; }
     .lt-finale { position: absolute; inset: 0; z-index: 5; display: flex; flex-direction: column;
       align-items: center; justify-content: center; text-align: center;
       will-change: opacity; padding: 2rem; }
@@ -207,54 +188,51 @@ const LongTakeStyles = () => (
 
 export default function LongTake() {
   const total = REELS.length; // finale rides on the tail segment
-  const [begun, setBegun] = useState(false);
   const [active, setActive] = useState(0);
-  const stageRef = useRef(null);
   const frameRefs = useRef([]);
   const captionRefs = useRef([]);
+  const stageRef = useRef(null);
+  const hudRef = useRef(null);
+  const railRef = useRef(null);
   const finaleRef = useRef(null);
-  const hintRef = useRef(null);
-  const smoothed = useRef(0);
-  const loaded = useRef(new Set());
+  const smoothed = useRef(-1);
 
   const segPx = () => (window.innerHeight * SEG_VH) / 100;
+  const heroPx = () => window.innerHeight; // hero above is min-h-screen
   const scrollHeight = useMemo(() => `${total * SEG_VH + TAIL_VH}vh`, [total]);
 
-  // Preload: first frame immediately; the rest one tick after Begin.
+  // Preload: first frame immediately, the rest shortly after mount.
   useEffect(() => {
-    const img = new Image();
-    img.src = REELS[0].still;
-    loaded.current.add(0);
+    const first = new Image();
+    first.src = REELS[0].still;
+    const t = setTimeout(() => {
+      REELS.slice(1).forEach((r) => { const img = new Image(); img.src = r.still; });
+    }, 1000);
+    return () => clearTimeout(t);
   }, []);
 
-  useEffect(() => {
-    if (!begun) return;
-    const t = setTimeout(() => {
-      REELS.forEach((r, i) => {
-        if (loaded.current.has(i)) return;
-        const img = new Image();
-        img.src = r.still;
-        loaded.current.add(i);
-      });
-    }, 800);
-    return () => clearTimeout(t);
-  }, [begun]);
-
-  // Scroll lock while the veil is up.
-  useEffect(() => {
-    document.documentElement.style.overflow = begun ? '' : 'hidden';
-    return () => { document.documentElement.style.overflow = ''; };
-  }, [begun]);
-
   // The engine: one rAF loop drives every frame/caption via direct style
-  // writes; React state only changes on discrete act boundaries.
+  // writes; React state only changes on discrete act boundaries. Progress
+  // is measured from the bottom of the hero, so p = 0 means reel one.
   useEffect(() => {
     let raf;
     const tick = () => {
-      const seg = segPx();
-      const target = window.scrollY / seg; // in "segments"
+      const target = (window.scrollY - heroPx()) / segPx();
       smoothed.current += (target - smoothed.current) * 0.09;
       const p = smoothed.current;
+
+      // Stage (and HUD/rail) fade in while the hero scrolls away.
+      const on = ease(clamp01((p + 0.55) / 0.45));
+      if (stageRef.current) {
+        stageRef.current.style.opacity = on.toFixed(3);
+        stageRef.current.style.visibility = on <= 0.001 ? 'hidden' : 'visible';
+        stageRef.current.style.pointerEvents = on > 0.6 ? 'auto' : 'none';
+      }
+      if (hudRef.current) hudRef.current.style.opacity = on.toFixed(3);
+      if (railRef.current) {
+        railRef.current.style.opacity = on.toFixed(3);
+        railRef.current.style.pointerEvents = on > 0.6 ? 'auto' : 'none';
+      }
 
       const idx = Math.min(total, Math.max(0, Math.floor(p + 0.5)));
       setActive((prev) => (prev === idx ? prev : idx));
@@ -287,16 +265,13 @@ export default function LongTake() {
         finaleRef.current.style.opacity = fo.toFixed(3);
         finaleRef.current.style.pointerEvents = fo > 0.5 ? 'auto' : 'none';
       }
-      if (hintRef.current) {
-        hintRef.current.style.opacity = p < 0.12 && begun ? 1 : 0;
-      }
       raf = requestAnimationFrame(tick);
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [begun, total]);
+  }, [total]);
 
-  const jumpTo = (i) => window.scrollTo({ top: i * segPx(), behavior: 'smooth' });
+  const jumpTo = (i) => window.scrollTo({ top: heroPx() + i * segPx(), behavior: 'smooth' });
 
   const current = active < total ? REELS[active] : FINALE;
 
@@ -304,13 +279,13 @@ export default function LongTake() {
     <div className="lt-root" style={{ height: scrollHeight }}>
       <LongTakeStyles />
 
-      <div className="lt-stage" ref={stageRef} aria-hidden={!begun}>
+      <div className="lt-stage" ref={stageRef} style={{ opacity: 0 }}>
         {REELS.map((r, i) => (
           <div
             key={r.slug}
             className="lt-frame"
             ref={(el) => { frameRefs.current[i] = el; }}
-            style={{ opacity: i === 0 ? 1 : 0 }}
+            style={{ opacity: 0 }}
           >
             <img src={r.still} alt="" loading={i === 0 ? 'eager' : 'lazy'} draggable={false} />
           </div>
@@ -353,20 +328,16 @@ export default function LongTake() {
         </div>
       </div>
 
-      <div className="lt-hud tl">
-        <Link to="/" className="deva" style={{ fontSize: '1.1rem', color: 'var(--tertiary)' }}>स्व</Link>
-        <span>
-          {active < total
-            ? `Reel ${String(active + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`
-            : 'End of reel'}
-        </span>
-      </div>
-      <div className="lt-hud tr">
+      <div className="lt-hud" ref={hudRef} style={{ opacity: 0 }}>
         <div className="yr">{current.year}</div>
-        <div style={{ marginTop: '0.3rem' }}>{current.stage}</div>
+        <div style={{ marginTop: '0.3rem' }}>
+          {active < total
+            ? `Reel ${String(active + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')} · ${current.stage}`
+            : current.stage}
+        </div>
       </div>
 
-      <nav className="lt-rail" aria-label="Reels">
+      <nav className="lt-rail" ref={railRef} aria-label="Reels" style={{ opacity: 0 }}>
         {REELS.map((r, i) => (
           <button
             key={r.slug}
@@ -387,20 +358,6 @@ export default function LongTake() {
           <i />
         </button>
       </nav>
-
-      <div className="lt-hint" ref={hintRef} style={{ opacity: 0 }}>
-        Scroll · the take is one continuous shot
-      </div>
-
-      <div className={`lt-veil ${begun ? 'gone' : ''}`}>
-        <div className="mark deva">स्व</div>
-        <div className="t display">The Long Take</div>
-        <div className="st">एक प्रवास · six years · eight films</div>
-        <button className="go" onClick={() => setBegun(true)}>
-          ▸ Begin the screening
-        </button>
-        <div className="s">No loading bar · one megabyte of light · 21.15° N, 79.09° E</div>
-      </div>
     </div>
   );
 }
