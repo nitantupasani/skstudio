@@ -594,28 +594,9 @@ const Nav = ({ scrolled }) => {
 // ============================================================
 
 const Hero = () => {
-  const [scrollY, setScrollY] = useState(0);
-
-  useEffect(() => {
-    const onScroll = () => setScrollY(window.scrollY);
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
-
   return (
     <section id="top" className="relative min-h-screen overflow-hidden">
-      <div
-        className="absolute inset-0 -z-10"
-        style={{
-          backgroundImage: `url('${process.env.PUBLIC_URL || ''}/cover.JPG')`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          transform: `translate3d(0, ${scrollY * 0.3}px, 0) scale(${1 + scrollY * 0.0003})`,
-          willChange: 'transform',
-        }}
-      />
-      <div className="absolute inset-0 -z-10 bg-base/70" />
-      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-base/50 via-base/10 to-base" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-b from-base via-[#0e0d0b] to-base" />
 
       <div className="relative px-6 sm:px-10 lg:px-16 xl:px-24 pt-36 lg:pt-44 pb-28 min-h-screen flex flex-col items-center justify-center text-center">
         {/* Static name, india.docs style: lowercase inline, tail letters blurred briefly */}
@@ -1944,7 +1925,7 @@ const TopArcMenu = ({ items, openId, onOpen }) => (
 const ConcentricArcsExperience = ({ embedded = false }) => {
   const [activeId, setActiveId] = useState(ARC_STAGES[0].id);
   const location = useLocation();
-  const coverUrl = `${process.env.PUBLIC_URL || ''}/cover.JPG`;
+  const coverUrl = media('nisargavedh-still-4.jpg');
   const chromeOffset = embedded ? 72 : 0;
   const topOffset = chromeOffset + MENU_H;
 
